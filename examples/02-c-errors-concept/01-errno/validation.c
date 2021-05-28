@@ -11,7 +11,7 @@ typedef enum {
 } validation_error_t;
 
 const char* const VALIDATION_ERROR_STRS[] = {
-    "All is OK",
+    "Everything is OK",
     "Invalid username",
     "Invalid email",
     "Too weak password",
