@@ -13,13 +13,13 @@ func TestNewError(t *testing.T) {
 		"invalid token",
 	} {
 		err := NewError(s)
-		require.Implements(t, error(nil), err)
+		require.Implements(t, (*error)(nil), err)
 		require.Equal(t, s, err.Error())
 	}
 }
 
-func TestNewError_uniq(t *testing.T) {
+func TestNewError_equality(t *testing.T) {
 	lhs := NewError("invalid token")
 	rhs := NewError("invalid token")
-	require.False(t, lhs != rhs, "different errors with the same text must not be equal")
+	require.False(t, lhs == rhs, "different errors with the same text must not be equal")
 }
