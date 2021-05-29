@@ -13,8 +13,8 @@ tasks:
 
   tools:install:
     - echo "Install local tools..."
-    - GO111MODULE=off go get -u mvdan.cc/gofumpt
-    - GO111MODULE=off go get -u github.com/daixiang0/gci
+    - (which gci > /dev/null) || GO111MODULE=off go get -u github.com/daixiang0/gci
+    - (which gofumpt > /dev/null) || GO111MODULE=off go get -u mvdan.cc/gofumpt
 
   tidy:
     cmds:
