@@ -10,7 +10,7 @@ func (e *MaxSizeExceededError) Error() string {
 	return fmt.Sprintf("max allowed length 1024 is less than desired %d", e.desiredLen)
 }
 
-type BufferIsEmptyError struct {}
+type BufferIsEmptyError struct{}
 
 func (b *BufferIsEmptyError) Error() string {
 	return "buffer is empty"
@@ -22,7 +22,7 @@ type ByteBuffer struct {
 }
 
 func (b *ByteBuffer) Write(p []byte) (int, error) {
-	if len(b.buffer) + len(p) > 1024 {
+	if len(b.buffer)+len(p) > 1024 {
 		return 0, &MaxSizeExceededError{desiredLen: len(b.buffer) + len(p)}
 	}
 
