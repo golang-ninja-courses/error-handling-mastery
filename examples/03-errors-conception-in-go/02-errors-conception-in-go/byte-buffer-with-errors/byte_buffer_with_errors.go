@@ -34,7 +34,7 @@ func (b *ByteBuffer) Read(p []byte) (int, error) {
 	if len(b.buffer) == b.offset {
 		return 0, &BufferIsEmptyError{}
 	}
-	
+
 	n := copy(p, b.buffer[b.offset:])
 	b.offset += n
 	return n, nil
