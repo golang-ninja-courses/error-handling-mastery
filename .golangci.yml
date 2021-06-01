@@ -1,6 +1,15 @@
 run:
   tests: true
 
+issues:
+  exclude:
+    - should have comment or be unexported
+
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - funlen
+
 linters:
   disable-all: true
   enable:
