@@ -3,7 +3,7 @@ run:
 
 issues:
   exclude:
-    - should have comment or be unexported
+    - should have comment
 
   exclude-rules:
     - path: _test\.go

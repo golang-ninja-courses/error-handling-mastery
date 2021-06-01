@@ -1,6 +1,14 @@
 package main
 
+import "io"
+
+type BufferIsEmptyError struct {
+	error
+}
+
 type ByteBuffer struct {
+	io.ByteReader
+	io.ByteWriter
 	buffer []byte // сам буфер, содержит какие-то данные
 	offset int    // смещение, указывающее на первый непрочитанный байт
 }
@@ -11,4 +19,4 @@ type ByteBuffer struct {
 // Метод Error() возвращаемой ошибки должен выводить "max allowed length 256 is less than desired %d".
 //
 // Метод ReadByte() должен возвращать ошибку при попытке прочитать из буфера, если он пуст.
-// Тип возвращаемой ошибки должен быть BufferIsEmptyError.
+// Тип возвращаемой ошибки должен быть *BufferIsEmptyError.
