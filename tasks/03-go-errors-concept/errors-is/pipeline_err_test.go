@@ -2,7 +2,10 @@ package pipe
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"math/rand"
+	"net"
 	"os"
 	"testing"
 
@@ -12,9 +15,15 @@ import (
 
 func TestPipelineErr_Is(t *testing.T) {
 	t.Run("different types", func(t *testing.T) {
-		lhs := &os.PathError{Op: "parse", Path: "/tmp/file.txt"}
-		rhs := &PipelineErr{User: "parse", Name: "/tmp/file.txt"}
-		require.False(t, errors.Is(lhs, rhs))
+		for _, err := range []error{
+			io.EOF,
+			&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
+			nil,
+			net.UnknownNetworkError("tdp"),
+		} {
+			pipeLineErr := &PipelineErr{User: "parse", Name: "/tmp/file.txt"}
+			require.False(t, errors.Is(pipeLineErr, err))
+		}
 	})
 
 	t.Run("equal errors", func(t *testing.T) {
@@ -26,11 +35,11 @@ func TestPipelineErr_Is(t *testing.T) {
 			for _, u2 := range users {
 				for _, op1 := range operations {
 					for _, op2 := range operations {
-						err := &PipelineErr{
+						err := fmt.Errorf("wrap: %w", &PipelineErr{
 							User:        u1,
 							Name:        op1,
 							FailedSteps: steps[:rand.Intn(len(steps))],
-						}
+						})
 
 						target := &PipelineErr{
 							User:        u2,
