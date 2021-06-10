@@ -1,9 +1,13 @@
 run:
+  skip-dirs-use-default: false
   tests: true
 
 issues:
+  max-same-issues: 0
+
   exclude:
-    - should have comment
+    - "exported:"
+    - G404 # weak random number generator
 
   exclude-rules:
     - path: _test\.go

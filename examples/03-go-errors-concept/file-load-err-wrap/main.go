@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -36,7 +37,7 @@ func loadFiles(urls ...string) ([]File, error) {
 func transfer() error {
 	_, err := loadFiles("www.golang-courses.ru")
 	if err != nil {
-		return fmt.Errorf("cannot load files: %v", err)
+		return fmt.Errorf("cannot load files: %w", err)
 	}
 
 	// ...
@@ -45,7 +46,7 @@ func transfer() error {
 
 func handle() error {
 	if err := transfer(); err != nil {
-		return fmt.Errorf("cannot transfer files: %v", err)
+		return fmt.Errorf("cannot transfer files: %w", err)
 	}
 
 	// ...
@@ -53,5 +54,8 @@ func handle() error {
 }
 
 func main() {
-	fmt.Println(handle())
+	var fileLoadErr *FileLoadError
+	if err := handle(); errors.As(err, &fileLoadErr) {
+		fmt.Println(fileLoadErr.URL) // www.golang-courses.ru
+	}
 }

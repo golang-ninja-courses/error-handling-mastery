@@ -4,8 +4,8 @@ const maxDepth = 256
 
 // Реализуй нас.
 var (
-	ErrNegativeN = error(nil)
-	ErrTooDeep   = error(nil)
+	ErrNegativeN error
+	ErrTooDeep   error
 )
 
 // Calculate рекурсивно считает факториал входного числа n.
