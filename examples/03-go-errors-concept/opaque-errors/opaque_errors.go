@@ -5,17 +5,14 @@ import (
 	"net"
 )
 
-type temporary interface {
-	Temporary() bool
-}
-
 func IsTemporary(err error) bool {
-	e, ok := err.(temporary) // Приводим ошибку к интерфейсу temporary, тем самым проверяя поведение
+	// Приводим ошибку к интерфейсу, тем самым проверяя поведение.
+	e, ok := err.(interface{ Temporary() bool })
 	return ok && e.Temporary()
 }
 
 func networkRequest() error {
-	return &net.DNSError{ // У DNSError есть метод Temporary() bool, загляните внутрь
+	return &net.DNSError{ // У DNSError есть метод Temporary() bool, загляните внутрь.
 		IsTimeout:   true,
 		IsTemporary: true,
 	}
@@ -23,8 +20,6 @@ func networkRequest() error {
 
 func main() {
 	if err := networkRequest(); err != nil {
-		if IsTemporary(err) {
-			fmt.Printf("temporary error detected") // Будет выведено
-		}
+		fmt.Println("error is temporary:", IsTemporary(err)) // error is temporary: true
 	}
 }
