@@ -12,7 +12,7 @@ func IsTemporary(err error) bool {
 }
 
 func networkRequest() error {
-	return &net.DNSError{ // У *DNSError есть метод Temporary() bool, загляните внутрь.
+	return &net.DNSError{ // У *DNSError есть метод Temporary(), загляните внутрь.
 		IsTimeout:   true,
 		IsTemporary: true,
 	}
