@@ -86,6 +86,12 @@ func TestSearchRequest_Validate_multipleErr(t *testing.T) {
 	assert.Contains(t, err.Error(), "-1")
 
 	assert.ErrorIs(t, err, errInvalidPageSize)
-	assert.Contains(t, err.Error(), "3000")
-	assert.Contains(t, err.Error(), "100")
+	assert.Contains(t, err.Error(), "3000 > 100")
+
+	// Negative PageSize.
+	req.PageSize = -1
+	err = req.Validate()
+	require.Error(t, err)
+	assert.ErrorIs(t, err, errInvalidPageSize)
+	assert.Contains(t, err.Error(), "-1 < 0")
 }
