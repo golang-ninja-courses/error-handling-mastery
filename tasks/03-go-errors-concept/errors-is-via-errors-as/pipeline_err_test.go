@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsPipelineErrFrom(t *testing.T) {
+func TestIsPipelineError(t *testing.T) {
 	t.Run("different types", func(t *testing.T) {
 		for _, err := range []error{
 			io.EOF,
@@ -19,7 +19,7 @@ func TestIsPipelineErrFrom(t *testing.T) {
 			nil,
 			net.UnknownNetworkError("tdp"),
 		} {
-			assert.False(t, IsPipelineErrFrom(err, "parse", "/tmp/file.txt"))
+			assert.False(t, IsPipelineError(err, "parse", "/tmp/file.txt"))
 		}
 	})
 
@@ -30,12 +30,12 @@ func TestIsPipelineErrFrom(t *testing.T) {
 
 		for _, u := range users {
 			for _, op := range operations {
-				err := fmt.Errorf("wrap: %w", &PipelineErr{
+				err := fmt.Errorf("wrap: %w", &PipelineError{
 					User:        u,
 					Name:        op,
 					FailedSteps: steps[:rand.Intn(len(steps))],
 				})
-				assert.True(t, IsPipelineErrFrom(err, u, op))
+				assert.True(t, IsPipelineError(err, u, op))
 			}
 		}
 	})

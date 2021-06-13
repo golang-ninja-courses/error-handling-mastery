@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPipelineErr_Is(t *testing.T) {
+func TestPipelineError_Is(t *testing.T) {
 	t.Run("different types", func(t *testing.T) {
 		for _, err := range []error{
 			io.EOF,

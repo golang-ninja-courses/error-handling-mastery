@@ -7,17 +7,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPipelineErr_As(t *testing.T) {
+func TestPipelineError_As(t *testing.T) {
 	for _, tt := range []struct {
-		pipelineErr     *PipelineErr
+		pipelineErr     *PipelineError
 		expectedUserErr *UserError
 	}{
 		{
-			pipelineErr:     &PipelineErr{User: "Bob", Name: "bitcoin calculation", FailedSteps: []string{"step 1", "step 2"}},
+			pipelineErr:     &PipelineError{User: "Bob", Name: "bitcoin calculation", FailedSteps: []string{"step 1", "step 2"}},
 			expectedUserErr: &UserError{User: "Bob", Operation: "bitcoin calculation"},
 		},
 		{
-			pipelineErr:     &PipelineErr{User: "Alex", Name: "file downloading"},
+			pipelineErr:     &PipelineError{User: "Alex", Name: "file downloading"},
 			expectedUserErr: &UserError{User: "Alex", Operation: "file downloading"},
 		},
 	} {
