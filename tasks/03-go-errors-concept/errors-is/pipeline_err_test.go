@@ -21,7 +21,7 @@ func TestPipelineErr_Is(t *testing.T) {
 			nil,
 			net.UnknownNetworkError("tdp"),
 		} {
-			pipeLineErr := &PipelineErr{User: "parse", Name: "/tmp/file.txt"}
+			pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
 			require.False(t, errors.Is(pipeLineErr, err))
 		}
 	})
@@ -35,13 +35,13 @@ func TestPipelineErr_Is(t *testing.T) {
 			for _, u2 := range users {
 				for _, op1 := range operations {
 					for _, op2 := range operations {
-						err := fmt.Errorf("wrap: %w", &PipelineErr{
+						err := fmt.Errorf("wrap: %w", &PipelineError{
 							User:        u1,
 							Name:        op1,
 							FailedSteps: steps[:rand.Intn(len(steps))],
 						})
 
-						target := &PipelineErr{
+						target := &PipelineError{
 							User:        u2,
 							Name:        op2,
 							FailedSteps: steps[:rand.Intn(len(steps))],
