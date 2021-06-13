@@ -1,4 +1,4 @@
-package interface_implementation
+package interfaceimpl
 
 type Ducker interface {
 	Quack() string // крякать

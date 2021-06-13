@@ -27,7 +27,7 @@ func getEntity() (Entity, error) {
 	return Entity{ID: "some-id"}, nil
 }
 
-func updateEntity(e Entity) error {
+func updateEntity(_ Entity) error {
 	if errOccurred() {
 		return ErrExecSQL
 	}
@@ -57,13 +57,9 @@ func handler() error {
 		return err
 	}
 
-	if err := runInTransaction(func() (opErr error) {
+	return runInTransaction(func() (opErr error) {
 		return updateEntity(e)
-	}); err != nil {
-		return err
-	}
-
-	return nil
+	})
 }
 
 func init() {

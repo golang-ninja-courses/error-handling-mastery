@@ -10,6 +10,10 @@ issues:
     - G404 # weak random number generator
 
   exclude-rules:
+    - path: examples/03-go-errors-concept/errorf-\d/main\.go
+      linters:
+        - govet
+
     - path: _test\.go
       linters:
         - funlen
