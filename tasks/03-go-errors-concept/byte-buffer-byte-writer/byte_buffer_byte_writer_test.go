@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestByteBuffer_ImplementsNecessary(t *testing.T) {
@@ -18,9 +19,12 @@ func TestByteBuffer_IoReader(t *testing.T) {
 	expected := "TestByteBuffer_IoReader"
 	actual := ""
 
-	b.buffer = []byte(expected)
+	for _, c := range []byte(expected) {
+		err := b.WriteByte(c)
+		require.NoError(t, err)
+	}
 
-	for {
+	for i := 0; i < len(expected)+1; i++ {
 		bb, err := b.ReadByte()
 		if err != nil {
 			assert.ErrorIs(t, err, new(BufferIsEmptyError))
@@ -36,13 +40,15 @@ func TestByteBuffer_IoReader(t *testing.T) {
 func TestByteBuffer_IoWriter(t *testing.T) {
 	b := ByteBuffer{}
 
-	for {
+	errMaxSizeExceeded := new(MaxSizeExceededError)
+
+	for i := 0; i < bufferMaxSize+1; i++ {
 		err := b.WriteByte('1')
 		if err != nil {
-			assert.EqualError(t, err, "max allowed length 256 is less than desired 257")
+			assert.ErrorAs(t, err, &errMaxSizeExceeded)
 			break
 		}
 	}
 
-	assert.Len(t, b.buffer, 256)
+	assert.Len(t, b.buffer, bufferMaxSize)
 }
