@@ -1,7 +1,12 @@
-package main
+package queue
 
 import (
 	"io"
+	"time"
+)
+
+const (
+	defaultPostpone = time.Second
 )
 
 type InconsistentDataError struct{}
@@ -13,7 +18,7 @@ func (e *InconsistentDataError) Error() string {
 type NotReadyError struct{}
 
 func (e *NotReadyError) Error() string {
-	return "job is not ready yet"
+	return "job is not ready to be performed"
 }
 
 type NotFoundError struct{}
@@ -40,6 +45,15 @@ type Job struct {
 
 type Handler struct{}
 
+func (j *Handler) Handle(job Job) (postpone int64, err error) {
+	err = j.process(job)
+	if err != nil {
+		// Обработайте ошибку.
+	}
+
+	return 0, nil
+}
+
 func (j *Handler) process(job Job) error {
 	switch job.ID {
 	case 1:
@@ -56,13 +70,4 @@ func (j *Handler) process(job Job) error {
 		return io.EOF
 	}
 	return nil
-}
-
-func (j *Handler) Handle(job Job) (postpone int64, err error) {
-	err = j.process(job)
-	if err != nil {
-		// Обработайте ошибку.
-	}
-
-	return 0, err
 }

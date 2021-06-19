@@ -1,7 +1,12 @@
-package main
+package queue
 
 import (
 	"io"
+	"time"
+)
+
+const (
+	defaultPostpone = time.Second
 )
 
 type shouldBeSkipped interface {
@@ -18,10 +23,28 @@ func (e *InconsistentDataError) Error() string {
 	return "job payload is corrupted"
 }
 
+func (e *InconsistentDataError) Skip() bool {
+	return true
+}
+
+type NotReadyError struct{}
+
+func (e *NotReadyError) Error() string {
+	return "job is not ready to be performed"
+}
+
+func (e *NotReadyError) Temporary() bool {
+	return true
+}
+
 type NotFoundError struct{}
 
 func (e *NotFoundError) Error() string {
 	return "job wasn't found"
+}
+
+func (e *NotFoundError) Skip() bool {
+	return true
 }
 
 type AlreadyDoneError struct{}
@@ -30,16 +53,18 @@ func (e *AlreadyDoneError) Error() string {
 	return "job is already done"
 }
 
+func (e *AlreadyDoneError) Skip() bool {
+	return true
+}
+
 type InvalidIdError struct{}
 
 func (e *InvalidIdError) Error() string {
 	return "invalid job id"
 }
 
-type NotReadyError struct{}
-
-func (e *NotReadyError) Error() string {
-	return "job is not ready yet"
+func (e *InvalidIdError) Skip() bool {
+	return true
 }
 
 type Job struct {
@@ -47,6 +72,15 @@ type Job struct {
 }
 
 type Handler struct{}
+
+func (j *Handler) Handle(job Job) (postpone int64, err error) {
+	err = j.process(job)
+	if err != nil {
+		// Обработайте ошибку.
+	}
+
+	return 0, nil
+}
 
 func (j *Handler) process(job Job) error {
 	switch job.ID {
@@ -64,13 +98,4 @@ func (j *Handler) process(job Job) error {
 		return io.EOF
 	}
 	return nil
-}
-
-func (j *Handler) Handle(job Job) (postpone int64, err error) {
-	err = j.process(job)
-	if err != nil {
-		// Обработайте ошибку.
-	}
-
-	return 0, err
 }
