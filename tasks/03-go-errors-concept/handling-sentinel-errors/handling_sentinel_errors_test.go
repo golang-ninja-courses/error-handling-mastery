@@ -1,4 +1,4 @@
-package main
+package queue
 
 import (
 	"io"
@@ -13,7 +13,7 @@ func Test_Errors(t *testing.T) {
 	assert.EqualError(t, ErrNotReady, "job is not ready to be performed")
 	assert.EqualError(t, ErrNotFound, "job wasn't found")
 	assert.EqualError(t, ErrAlreadyDone, "job is already done")
-	assert.EqualError(t, ErrInvalidId, "invalid job id")
+	assert.EqualError(t, ErrInvalidID, "invalid job id")
 }
 
 func TestHandler_Handle(t *testing.T) {
@@ -40,7 +40,7 @@ func TestHandler_Handle(t *testing.T) {
 	postpone, err = h.Handle(Job{ID: 5})
 	assert.Error(t, err)
 	assert.Empty(t, postpone)
-	assert.Equal(t, ErrInvalidId, err)
+	assert.Equal(t, ErrInvalidID, err)
 
 	postpone, err = h.Handle(Job{ID: 6})
 	assert.Error(t, err)
