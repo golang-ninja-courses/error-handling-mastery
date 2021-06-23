@@ -10,7 +10,7 @@ type BufferIsEmptyError struct {
 	error
 }
 
-type MaxSizeExceededError struct {}
+type MaxSizeExceededError struct{}
 
 type ByteBuffer struct {
 	io.ByteReader
