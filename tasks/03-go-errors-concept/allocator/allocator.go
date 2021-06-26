@@ -1,4 +1,4 @@
-package main
+package memory
 
 const (
 	Admin          = 777

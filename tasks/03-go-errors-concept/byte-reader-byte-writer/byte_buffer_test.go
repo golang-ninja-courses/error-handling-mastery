@@ -9,12 +9,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestByteBuffer_implementsNecessary(t *testing.T) {
+func TestByteBufferImplementsNecessary(t *testing.T) {
 	assert.Implements(t, (*io.ByteWriter)(nil), new(ByteBuffer))
 	assert.Implements(t, (*io.ByteReader)(nil), new(ByteBuffer))
 }
 
-func TestByteBuffer_ioReader(t *testing.T) {
+func TestByteBufferIOReader(t *testing.T) {
 	var b ByteBuffer
 
 	expected := "TestByteBuffer_IoReader"
@@ -40,7 +40,7 @@ func TestByteBuffer_ioReader(t *testing.T) {
 	assert.Equal(t, expected, actual.String())
 }
 
-func TestByteBuffer_ioWriter(t *testing.T) {
+func TestByteBufferIOWriter(t *testing.T) {
 	var b ByteBuffer
 
 	for i := 0; i < bufferMaxSize+1; i++ {
@@ -56,18 +56,18 @@ func TestByteBuffer_ioWriter(t *testing.T) {
 	assert.Len(t, b.buffer, bufferMaxSize)
 }
 
-func TestByteBuffer_readFromEmptyBuffer(t *testing.T) {
+func TestByteBufferReadFromEmptyBuffer(t *testing.T) {
 	var b ByteBuffer
 	n, err := b.ReadByte()
 	assert.Equal(t, byte(0), n)
 	assert.True(t, isEndOfBuffer(err))
 }
 
-func TestEndOfBuffer_Error(t *testing.T) {
+func TestEndOfBufferError(t *testing.T) {
 	assert.NotEmpty(t, new(EndOfBuffer).Error())
 }
 
-func TestMaxSizeExceededError_Error(t *testing.T) {
+func TestMaxSizeExceededError(t *testing.T) {
 	assert.NotEmpty(t, new(MaxSizeExceededError).Error())
 }
 

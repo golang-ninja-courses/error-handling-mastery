@@ -1,4 +1,4 @@
-package main
+package memory
 
 import (
 	"testing"
@@ -7,41 +7,52 @@ import (
 )
 
 func TestErrors(t *testing.T) {
-	assert.Implements(t, (*error)(nil), new(NotPermittedError))
-	assert.Implements(t, (*error)(nil), new(ArgOutOfDomainError))
+	assert.EqualError(t, new(NotPermittedError), "operation not permitted")
+	assert.EqualError(t, new(ArgOutOfDomainError), "numerical argument out of domain of func")
 }
 
-func TestAllocate_UserID(t *testing.T) {
-	_, err := Allocate(Admin, MinMemoryBlock)
-	assert.NoError(t, err)
+func TestAllocateUserID(t *testing.T) {
+	t.Run("allocate from admin", func(t *testing.T) {
+		buffer, err := Allocate(Admin, MinMemoryBlock)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, buffer)
+	})
 
-	errNotPermitted := &NotPermittedError{}
-
-	_, err = Allocate(123, MinMemoryBlock)
-	assert.Error(t, err)
-	assert.ErrorAs(t, err, &errNotPermitted)
+	t.Run("allocate from unknown user", func(t *testing.T) {
+		buffer, err := Allocate(123, MinMemoryBlock)
+		assert.Error(t, err)
+		assert.True(t, isNotPermittedError(err))
+		assert.Nil(t, buffer)
+	})
 }
 
-func TestAllocate_Size(t *testing.T) {
-	_, err := Allocate(Admin, MinMemoryBlock)
-	assert.NoError(t, err)
+func TestAllocateSize(t *testing.T) {
+	t.Run("allocate min memory block", func(t *testing.T) {
+		buffer, err := Allocate(Admin, MinMemoryBlock)
+		assert.NoError(t, err)
+		assert.Len(t, buffer, MinMemoryBlock)
+	})
 
-	errArgOutOfDomain := &ArgOutOfDomainError{}
+	t.Run("allocate too low memory block", func(t *testing.T) {
+		buffer, err := Allocate(Admin, 512)
+		assert.Error(t, err)
+		assert.True(t, isArgOutOfDomainError(err))
+		assert.Nil(t, buffer)
+	})
 
-	_, err = Allocate(Admin, 512)
-	assert.Error(t, err)
-	assert.ErrorAs(t, err, &errArgOutOfDomain)
-
-	_, err = Allocate(Admin, 2048)
-	assert.NoError(t, err)
+	t.Run("allocate memory block with valid size", func(t *testing.T) {
+		buffer, err := Allocate(Admin, 2048)
+		assert.NoError(t, err)
+		assert.Len(t, buffer, 2048)
+	})
 }
 
-func TestAllocate(t *testing.T) {
-	buffer, err := Allocate(Admin, MinMemoryBlock)
-	assert.NoError(t, err)
-	assert.Len(t, buffer, MinMemoryBlock)
+func isNotPermittedError(err error) bool {
+	_, ok := err.(*NotPermittedError)
+	return ok
+}
 
-	buffer, err = Allocate(Admin, 2048)
-	assert.NoError(t, err)
-	assert.Len(t, buffer, 2048)
+func isArgOutOfDomainError(err error) bool {
+	_, ok := err.(*ArgOutOfDomainError)
+	return ok
 }
