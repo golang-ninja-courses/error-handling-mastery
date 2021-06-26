@@ -2,27 +2,31 @@ package main
 
 import "fmt"
 
+const bufferMaxSize = 1024
+
 type MaxSizeExceededError struct {
 	desiredLen int
 }
 
 func (e *MaxSizeExceededError) Error() string {
-	return fmt.Sprintf("max allowed length 1024 is less than desired %d", e.desiredLen)
+	return fmt.Sprintf("buffer max size exceeded: %d > %d", e.desiredLen, bufferMaxSize)
 }
 
-type BufferIsEmptyError struct{}
+type EndOfBuffer struct{}
 
-func (b *BufferIsEmptyError) Error() string {
-	return "buffer is empty"
+func (b *EndOfBuffer) Error() string {
+	return "end of buffer"
 }
 
 type ByteBuffer struct {
-	buffer []byte // сам буфер, содержит какие-то данные
-	offset int    // смещение, указывающее на первый непрочитанный байт
+	// buffer представляем собой непосредственно буфер: содержит какие-то данные.
+	buffer []byte
+	// offset представляет собой смещение, указывающее на первый непрочитанный байт.
+	offset int
 }
 
 func (b *ByteBuffer) Write(p []byte) (int, error) {
-	if len(b.buffer)+len(p) > 1024 {
+	if len(b.buffer)+len(p) > bufferMaxSize {
 		return 0, &MaxSizeExceededError{desiredLen: len(b.buffer) + len(p)}
 	}
 
@@ -31,8 +35,8 @@ func (b *ByteBuffer) Write(p []byte) (int, error) {
 }
 
 func (b *ByteBuffer) Read(p []byte) (int, error) {
-	if len(b.buffer) == b.offset {
-		return 0, &BufferIsEmptyError{}
+	if b.offset >= len(b.buffer) {
+		return 0, new(EndOfBuffer)
 	}
 
 	n := copy(p, b.buffer[b.offset:])
@@ -41,12 +45,17 @@ func (b *ByteBuffer) Read(p []byte) (int, error) {
 }
 
 func main() {
-	b := ByteBuffer{}
-	b.Write([]byte("hello"))
+	var b ByteBuffer
+	if _, err := b.Write([]byte("hello hello hello")); err != nil {
+		panic(err)
+	}
 
-	p := make([]byte, 1)
+	p := make([]byte, 3)
 	for {
-		b.Read(p)
-		fmt.Print(string(p))
+		n, err := b.Read(p)
+		if _, ok := err.(*EndOfBuffer); ok {
+			break
+		}
+		fmt.Print(string(p[:n])) // hello hello hello
 	}
 }
