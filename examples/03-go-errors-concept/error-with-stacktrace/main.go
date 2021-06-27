@@ -14,6 +14,10 @@ func (w *WithStacktraceError) Error() string {
 	return w.message
 }
 
+func (w *WithStacktraceError) StackTrace() string {
+	return string(w.stacktrace)
+}
+
 func doSomething() error {
 	return &WithStacktraceError{
 		message:    "something went wrong",
@@ -24,7 +28,7 @@ func doSomething() error {
 func main() {
 	if err := doSomething(); err != nil {
 		if stacktraceErr, ok := err.(*WithStacktraceError); ok {
-			fmt.Printf("%s\n%s", stacktraceErr.message, string(stacktraceErr.stacktrace))
+			fmt.Printf("%s\n%s", stacktraceErr.Error(), stacktraceErr.StackTrace())
 		}
 	}
 }
