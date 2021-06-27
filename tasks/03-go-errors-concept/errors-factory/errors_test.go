@@ -1,9 +1,8 @@
 package errors
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestNewError(t *testing.T) {
@@ -13,13 +12,12 @@ func TestNewError(t *testing.T) {
 		"invalid token",
 	} {
 		err := NewError(s)
-		require.Implements(t, (*error)(nil), err)
-		require.Equal(t, s, err.Error())
+		assert.Equal(t, s, err.Error())
 	}
 }
 
-func TestNewError_equality(t *testing.T) {
+func TestNewErrorEquality(t *testing.T) {
 	lhs := NewError("invalid token")
 	rhs := NewError("invalid token")
-	require.False(t, lhs == rhs, "different errors with the same text must not be equal")
+	assert.False(t, lhs == rhs, "different errors with the same text must not be equal")
 }
