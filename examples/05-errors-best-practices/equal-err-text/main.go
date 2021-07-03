@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"io"
@@ -18,4 +19,6 @@ func main() {
 
 	noRows := errors.New("no rows in result set")
 	fmt.Println(errors.Is(noRows, pgx.ErrNoRows)) // false
+
+	fmt.Println(errors.Is(sql.ErrNoRows, pgx.ErrNoRows)) // false
 }
