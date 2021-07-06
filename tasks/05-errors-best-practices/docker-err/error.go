@@ -1,7 +1,6 @@
 package docker
 
-type Error struct {
-}
+type Error struct{}
 
 func (e *Error) Error() string {
 	panic("implement me")

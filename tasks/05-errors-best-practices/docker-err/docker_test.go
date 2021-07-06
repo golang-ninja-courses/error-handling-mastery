@@ -8,6 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestError_Error(t *testing.T) {
+	msg := `Error response from daemon: pull access denied for rabbitmq:4-management`
+	err := newDockerError(errors.New(msg))
+	assert.Equal(t, msg, err.Error())
+}
+
 func TestErrorImplementsHelpfulMethods(t *testing.T) {
 	type helpfulMethods interface {
 		IsPullAccessDeniedError() bool
