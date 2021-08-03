@@ -4,7 +4,8 @@ go 1.16
 
 require (
 	github.com/cockroachdb/apd v1.1.0 // indirect
-	github.com/cockroachdb/sentry-go v0.3.999
+	github.com/cockroachdb/errors v1.8.5
+	github.com/cockroachdb/sentry-go v0.6.1-cockroachdb.2
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
