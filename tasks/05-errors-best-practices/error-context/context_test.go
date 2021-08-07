@@ -10,7 +10,7 @@ import (
 )
 
 func TestAppendToNilIsNil(t *testing.T) {
-	err := errctx.AppendTo(nil, map[string]interface{}{"uid": "Stepan"})
+	err := errctx.AppendTo(nil, errctx.Fields{"uid": "Stepan"})
 	assert.Nil(t, err)
 }
 
@@ -21,19 +21,19 @@ func TestNoErrorNoContext(t *testing.T) {
 
 func TestWrapping(t *testing.T) {
 	err := fmt.Errorf("read file: %w", io.EOF)
-	err = errctx.AppendTo(err, map[string]interface{}{"key1": "value1", "key2": "value2"})
+	err = errctx.AppendTo(err, errctx.Fields{"key1": "value1", "key2": "value2"})
 
 	err = fmt.Errorf("do foo: %w", err)
-	err = errctx.AppendTo(err, map[string]interface{}{"key1": 11, "key3": 3})
+	err = errctx.AppendTo(err, errctx.Fields{"key1": 11, "key3": 3})
 
 	err = fmt.Errorf("do bar: %w", err)
-	err = errctx.AppendTo(err, map[string]interface{}{"key4": "value4"})
+	err = errctx.AppendTo(err, errctx.Fields{"key4": "value4"})
 
 	assert.ErrorIs(t, err, io.EOF)
 	assert.EqualError(t, err, "do bar: do foo: read file: EOF")
 
 	ctx := errctx.From(err)
-	assert.Equal(t, map[string]interface{}{
+	assert.Equal(t, errctx.Fields{
 		"key1": "value1",
 		"key2": "value2",
 		"key3": 3,
@@ -42,7 +42,7 @@ func TestWrapping(t *testing.T) {
 }
 
 func TestImmutableCtx(t *testing.T) {
-	ctx := map[string]interface{}{"key1": "value1", "key2": "value2"}
+	ctx := errctx.Fields{"key1": "value1", "key2": "value2"}
 	err := errctx.AppendTo(io.EOF, ctx)
 	extractedCtx := errctx.From(err)
 	ctx["new_key"] = "new_value"
