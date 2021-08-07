@@ -8,9 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	errReference = errors.New("reference Is() error")
-)
+var errReference = errors.New("reference Is() error")
 
 type withMessageError struct {
 	message string

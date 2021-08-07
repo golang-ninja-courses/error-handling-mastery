@@ -18,6 +18,6 @@ func main() {
 	}
 
 	if errors.Is(err, io.ErrUnexpectedEOF) {
-		fmt.Println("error is io.ErrUnexpectedEOF")  // Выведется
+		fmt.Println("error is io.ErrUnexpectedEOF") // Выведется
 	}
 }

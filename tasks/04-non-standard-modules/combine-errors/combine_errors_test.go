@@ -36,9 +36,7 @@ func TestCombineErrors_ArgsAreNil(t *testing.T) {
 }
 
 func TestCombineErrors_OtherErrsAreNil(t *testing.T) {
-	var (
-		err = errors.New("an error")
-	)
+	err := errors.New("an error")
 
 	combinedErr := CombineErrors(err, nil)
 
