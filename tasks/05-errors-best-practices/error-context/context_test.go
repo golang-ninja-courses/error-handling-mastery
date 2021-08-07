@@ -10,11 +10,13 @@ import (
 )
 
 func TestAppendToNilIsNil(t *testing.T) {
-	assert.Nil(t, errctx.AppendTo(nil, map[string]interface{}{"uid": "Stepan"}))
+	err := errctx.AppendTo(nil, map[string]interface{}{"uid": "Stepan"})
+	assert.Nil(t, err)
 }
 
 func TestNoErrorNoContext(t *testing.T) {
-	assert.Empty(t, errctx.From(nil))
+	ctx := errctx.From(nil)
+	assert.Empty(t, ctx)
 }
 
 func TestWrapping(t *testing.T) {
@@ -29,12 +31,14 @@ func TestWrapping(t *testing.T) {
 
 	assert.ErrorIs(t, err, io.EOF)
 	assert.EqualError(t, err, "do bar: do foo: read file: EOF")
+
+	ctx := errctx.From(err)
 	assert.Equal(t, map[string]interface{}{
 		"key1": "value1",
 		"key2": "value2",
 		"key3": 3,
 		"key4": "value4",
-	}, errctx.From(err))
+	}, ctx)
 }
 
 func TestImmutableCtx(t *testing.T) {
