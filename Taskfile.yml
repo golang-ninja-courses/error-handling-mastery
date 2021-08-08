@@ -31,3 +31,7 @@ tasks:
     cmds:
       - echo "Lint..."
       - golangci-lint run --fix ./...
+
+  lint:dir:
+    - echo "Lint..."
+    - golangci-lint run --fix {{.CLI_ARGS}}
