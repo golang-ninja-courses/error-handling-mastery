@@ -77,20 +77,29 @@ func ParseUserRequest(r io.Reader) (UserRegistrationRequest, error) {
 }
 
 var (
-	errInvalidData = errors.New("invalid data")
-	errEmptyField  = errors.New("field is empty")
+	errUnexpectedTypeInMonad = errors.New("unexpected type in monad")
+	errInvalidData           = errors.New("invalid data")
+	errEmptyField            = errors.New("field is empty")
 )
 
 func unmarshalRequest(v interface{}) M {
+	r, ok := v.(io.Reader)
+	if !ok {
+		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))
+	}
+
 	var req UserRegistrationRequest
-	if err := json.NewDecoder(v.(io.Reader)).Decode(&req); err != nil {
+	if err := json.NewDecoder(r).Decode(&req); err != nil {
 		return Err(fmt.Errorf("%w: %v", errInvalidData, err))
 	}
 	return Unit(req)
 }
 
 func validateEmail(v interface{}) M {
-	req := v.(UserRegistrationRequest)
+	req, ok := v.(UserRegistrationRequest)
+	if !ok {
+		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))
+	}
 	if req.Email == "" {
 		return Err(fmt.Errorf("%w: Email", errEmptyField))
 	}
@@ -98,7 +107,10 @@ func validateEmail(v interface{}) M {
 }
 
 func validatePassword(v interface{}) M {
-	req := v.(UserRegistrationRequest)
+	req, ok := v.(UserRegistrationRequest)
+	if !ok {
+		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))
+	}
 	if req.Password == "" {
 		return Err(fmt.Errorf("%w: Password", errEmptyField))
 	}
