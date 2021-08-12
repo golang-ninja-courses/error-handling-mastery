@@ -7,9 +7,7 @@ import (
 	"go.uber.org/multierr"
 )
 
-var (
-	errCloserMock = errors.New("close error")
-)
+var errCloserMock = errors.New("close error")
 
 type CloserMock struct{}
 
