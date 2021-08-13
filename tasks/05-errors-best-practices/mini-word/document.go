@@ -7,9 +7,9 @@ import (
 const maxPages = 3
 
 var (
-	errInvalidPageIndex error
-	errNoMorePages      error
-	errEmptyText        error
+	errInvalidPageNumber error
+	errNoMorePages       error
+	errEmptyText         error
 )
 
 type Document struct { // Реализуй меня.
@@ -24,7 +24,7 @@ func (d *Document) AddPage() {
 	// Реализуй меня.
 }
 
-func (d *Document) SetActivePage(index int) {
+func (d *Document) SetActivePage(number int) {
 	// Реализуй меня.
 }
 

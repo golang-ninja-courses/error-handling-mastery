@@ -70,7 +70,7 @@ func TestDoc_AddPage(t *testing.T) {
 
 func TestDoc_SetActivePage(t *testing.T) {
 	for _, i := range []int{-1, 100} {
-		t.Run(fmt.Sprintf("page_index_%d", i), func(t *testing.T) {
+		t.Run(fmt.Sprintf("page_num_%d", i), func(t *testing.T) {
 			d := NewDocument()
 			d.WriteText("Hello!")
 			d.SetActivePage(i)
@@ -79,7 +79,7 @@ func TestDoc_SetActivePage(t *testing.T) {
 
 			b := bytes.NewBuffer(nil)
 			n, err := d.WriteTo(b)
-			require.ErrorIs(t, err, errInvalidPageIndex)
+			require.ErrorIs(t, err, errInvalidPageNumber)
 			assert.Equal(t, int64(0), n)
 			assert.Empty(t, b.String())
 		})
@@ -118,7 +118,7 @@ func TestDoc_MultipleErrors(t *testing.T) {
 }
 
 func TestErrorsAreFilled(t *testing.T) {
-	assert.NotNil(t, errInvalidPageIndex)
+	assert.NotNil(t, errInvalidPageNumber)
 	assert.NotNil(t, errNoMorePages)
 	assert.NotNil(t, errEmptyText)
 }
