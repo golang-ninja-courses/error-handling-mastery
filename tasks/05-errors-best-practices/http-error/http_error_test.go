@@ -42,6 +42,9 @@ func TestHTTPError(t *testing.T) {
 	}
 
 	for _, tt := range cases {
+		_, ok := tt.err.(HTTPError)
+		assert.True(t, ok)
+
 		var c interface {
 			Code() int
 		}
@@ -49,4 +52,8 @@ func TestHTTPError(t *testing.T) {
 		assert.Equal(t, tt.code, c.Code())
 		assert.Equal(t, tt.err.Error(), tt.text)
 	}
+}
+
+func TestHTTPErrorIsInt(t *testing.T) {
+	_ = HTTPError(200)
 }
