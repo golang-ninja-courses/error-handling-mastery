@@ -3,6 +3,9 @@ module github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go
 go 1.16
 
 require (
+	emperror.dev/emperror v0.33.0
+	emperror.dev/errors v0.8.0 // indirect
+	emperror.dev/handler/logrus v0.3.1
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/cockroachdb/errors v1.8.5
 	github.com/cockroachdb/sentry-go v0.6.1-cockroachdb.2
@@ -14,6 +17,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/quasilyte/go-ruleguard/dsl v0.3.6
 	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/testify v1.7.0
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0
