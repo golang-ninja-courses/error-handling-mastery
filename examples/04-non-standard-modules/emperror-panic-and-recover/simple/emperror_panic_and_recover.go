@@ -7,16 +7,14 @@ import (
 	"emperror.dev/errors"
 )
 
-var (
-	errHandler = emperror.ErrorHandlerFunc(func(err error) {
-		if err == nil {
-			return
-		}
+var errHandler = emperror.ErrorHandlerFunc(func(err error) {
+	if err == nil {
+		return
+	}
 
-		// Логируем ошибку, например
-		fmt.Printf("error handler called: %v\n", err)
-	})
-)
+	// Логируем ошибку, например
+	fmt.Printf("error handler called: %v\n", err)
+})
 
 func doSomething() error {
 	return errors.New("error")

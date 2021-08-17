@@ -1,9 +1,10 @@
 package main
 
 import (
-	"emperror.dev/emperror"
 	"fmt"
 	"net/http"
+
+	"emperror.dev/emperror"
 )
 
 func NewPanicMiddleware(h http.Handler) http.Handler {

@@ -34,7 +34,7 @@ var (
 )
 
 func main() {
-	var handler = emperror.WithFilter(errHandler, errMatcher)
+	handler := emperror.WithFilter(errHandler, errMatcher)
 
 	handler.Handle(err1) // обработчик не сработает
 

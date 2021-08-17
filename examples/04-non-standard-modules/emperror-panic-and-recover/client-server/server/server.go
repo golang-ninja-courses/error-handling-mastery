@@ -71,7 +71,7 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	var mux = http.DefaultServeMux
+	mux := http.DefaultServeMux
 	mux.Handle("/", http.HandlerFunc(Handle))
 
 	var handler http.Handler = mux
