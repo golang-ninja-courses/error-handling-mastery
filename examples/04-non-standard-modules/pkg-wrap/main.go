@@ -61,4 +61,9 @@ func main() {
 	if f, ok := errors.Cause(err).(*FileLoadError); ok {
 		fmt.Println(f.URL)
 	}
+
+	var fileLoadErr *FileLoadError
+	if err := handle(); errors.As(err, &fileLoadErr) {
+		fmt.Println(fileLoadErr.URL) // www.golang-courses.ru
+	}
 }
