@@ -3,6 +3,7 @@ package main
 import (
 	stderrors "errors"
 	"fmt"
+	"io"
 
 	"github.com/pkg/errors"
 )
@@ -18,5 +19,10 @@ func main() {
 	{
 		err := errors.Errorf("index.html: %w", ErrNotFound)
 		fmt.Println(err, "|", errors.Is(err, ErrNotFound)) // index.html: %!w(*errors.errorString=&{not found}) | false
+	}
+
+	{
+		err := errors.Wrapf(ErrNotFound, "index.html: %w", io.EOF)
+		fmt.Println(err, "|", errors.Is(err, ErrNotFound)) // index.html: %!w(*errors.errorString=&{not found}) | true
 	}
 }
