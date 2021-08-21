@@ -20,15 +20,15 @@ func main() {
 		},
 		{
 			title: "only pkg/errors errors",
-			err:   errors.Wrap(errors.Wrap(os.ErrNotExist, "msg 1"), " msg 2"),
+			err:   errors.Wrap(errors.Wrap(wrappedErr, "msg 1"), " msg 2"),
 		},
 		{
 			title: "combined 1",
-			err:   errors.Wrap(fmt.Errorf("msg 1: %w", os.ErrNotExist), "msg 2"),
+			err:   errors.Wrap(fmt.Errorf("msg 1: %w", wrappedErr), "msg 2"),
 		},
 		{
 			title: "combined 2",
-			err:   fmt.Errorf("msg 2: %w", errors.Wrap(os.ErrNotExist, "msg 1")),
+			err:   fmt.Errorf("msg 2: %w", errors.Wrap(wrappedErr, "msg 1")),
 		},
 	}
 
