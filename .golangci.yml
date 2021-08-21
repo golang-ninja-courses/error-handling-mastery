@@ -35,6 +35,7 @@ linters:
     - durationcheck
     - errcheck
     - errorlint
+    - errname
     - exportloopref
     - funlen
     - gci
