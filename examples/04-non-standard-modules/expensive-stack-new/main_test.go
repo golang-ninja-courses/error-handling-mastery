@@ -9,3 +9,9 @@ func BenchmarkGimmeError(b *testing.B) {
 		_ = GimmeError()
 	}
 }
+
+func BenchmarkGimmePkgError(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = GimmePkgError()
+	}
+}
