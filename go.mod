@@ -8,7 +8,7 @@ require (
 	emperror.dev/handler/logrus v0.3.1
 	github.com/cockroachdb/apd v1.1.0 // indirect
 	github.com/cockroachdb/errors v1.8.5
-	github.com/cockroachdb/sentry-go v0.6.1-cockroachdb.2
+	github.com/getsentry/sentry-go v0.11.0
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
