@@ -1,6 +1,6 @@
-package is_any
+package errors
 
 func IsAny(err error, references ...error) bool {
-	// TODO реализовать
+	// Реализуй меня.
 	return false
 }
