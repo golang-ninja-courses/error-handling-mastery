@@ -37,6 +37,6 @@ func main() {
 	err := fmt.Errorf("second wrap: %w",
 		fmt.Errorf("first wrap: %w", dnsErr))
 
-	fmt.Printf("is temporary: %t\n", IsTemporaryOnce(err))     // true
-	fmt.Printf("is temporary at root: %t\n", IsTemporary(err)) // true
+	fmt.Printf("is temporary: %t\n", IsTemporaryOnce(err))     // is temporary: true
+	fmt.Printf("is temporary at root: %t\n", IsTemporary(err)) // is temporary at root: true
 }
