@@ -10,6 +10,9 @@ require (
 	github.com/cockroachdb/errors v1.8.5
 	github.com/getsentry/sentry-go v0.11.0
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
+	github.com/gogo/protobuf v1.3.2
+	github.com/gogo/status v1.1.0
+	github.com/hydrogen18/memlistener v0.0.0-20200120041712-dcc25e7acd91
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/labstack/echo/v4 v4.3.0
@@ -23,4 +26,5 @@ require (
 	go.uber.org/multierr v1.7.0
 	go.uber.org/zap v1.18.1
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e // indirect
+	google.golang.org/grpc v1.38.0
 )
