@@ -4,25 +4,33 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 
 	"go.uber.org/multierr"
 )
 
-var errCloserMock = errors.New("close error")
+func main() {
+	if err := processFile("/etc/hosts"); err != nil { // false
+		fmt.Printf("%v\n", err)
+	}
 
-type CloserMock struct{}
+	if err := processCloserMock(); err != nil {
+		fmt.Printf("%v\n", err) // close error
+	}
 
-func (c *CloserMock) Close() error {
-	return errCloserMock
+	if err := processCloserMockWithError(); err != nil {
+		fmt.Printf("%v\n", err) // process error; close error
+	}
 }
 
-// processFile – пример штатного использования multierr.AppendInvoke().
-// Обратите внимание, что multierr.AppendInvoke() используется вкупе с именованным возвращаемым аргументом err.
+// processFile – пример штатного использования multierr.AppendInvoke.
+// Обратите внимание, что multierr.AppendInvoke используется вместе с
+// именованным возвращаемым аргументом err.
 func processFile(path string) (err error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("open file: %v", err)
 	}
 	defer multierr.AppendInvoke(&err, multierr.Close(f))
 
@@ -30,41 +38,25 @@ func processFile(path string) (err error) {
 	defer multierr.AppendInvoke(&err, multierr.Invoke(scanner.Err))
 
 	for scanner.Scan() {
-		fmt.Println(string(scanner.Bytes()))
+		fmt.Println(scanner.Text())
 	}
+	return nil
+}
 
-	return err
+var _ io.Closer = CloserMock{}
+
+type CloserMock struct{}
+
+func (c CloserMock) Close() error {
+	return errors.New("close error")
 }
 
 func processCloserMock() (err error) {
-	mock := CloserMock{}
-	defer multierr.AppendInvoke(&err, multierr.Close(&mock))
-
-	return err
+	defer multierr.AppendInvoke(&err, multierr.Close(CloserMock{}))
+	return nil
 }
 
 func processCloserMockWithError() (err error) {
-	mock := CloserMock{}
-	defer multierr.AppendInvoke(&err, multierr.Close(&mock))
-
-	err = errors.New("an error")
-
-	return err
-}
-
-func main() {
-	err := processFile("./examples/04-non-standard-modules/multierr-append-invoke/test_file.txt")
-	if err != nil {
-		fmt.Printf("%v\n", err) // ничего не выведет
-	}
-
-	err = processCloserMock()
-	if err != nil {
-		fmt.Printf("%v\n", err) // выведет "close error"
-	}
-
-	err = processCloserMockWithError()
-	if err != nil {
-		fmt.Printf("%v\n", err) // выведет an error; close error
-	}
+	defer multierr.AppendInvoke(&err, multierr.Close(CloserMock{}))
+	return errors.New("process error")
 }
