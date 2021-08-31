@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,91 +12,47 @@ import (
 )
 
 const (
-	port = 8888
-
-	shutdownTimeout = 1 * time.Second
+	port            = 8888
+	shutdownTimeout = time.Second
 )
-
-var (
-	shutdownSignals = []os.Signal{syscall.SIGINT, syscall.SIGTERM}
-
-	middlewares = []func(http.Handler) http.Handler{
-		NewPanicMiddleware,
-	}
-)
-
-func listen(ch chan error, server *http.Server) {
-	err := server.ListenAndServe()
-	if err != nil && err != http.ErrServerClosed {
-		ch <- err
-	}
-}
-
-func shutdown(server *http.Server) error {
-	var cancel func()
-	ctx := context.Background()
-
-	ctx, cancel = context.WithTimeout(ctx, shutdownTimeout)
-	defer cancel()
-
-	server.SetKeepAlivesEnabled(false)
-	return server.Shutdown(ctx)
-}
-
-func internalServerError(w http.ResponseWriter, errMsg string) {
-	w.WriteHeader(http.StatusInternalServerError)
-	_, _ = w.Write([]byte(errMsg))
-}
-
-func ok(w http.ResponseWriter, msg string) {
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(msg))
-}
-
-func Handle(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		internalServerError(w, "error while reading request body")
-		return
-	}
-
-	switch string(body) {
-	case "panic":
-		panic("client wants me to panic")
-	case "error":
-		ok(w, "internal server error")
-	default:
-		ok(w, "ok")
-	}
-}
 
 func main() {
 	mux := http.DefaultServeMux
 	mux.Handle("/", http.HandlerFunc(Handle))
 
-	var handler http.Handler = mux
-	for _, mw := range middlewares {
-		handler = mw(handler)
-	}
-
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: handler,
+		Addr:    fmt.Sprintf("127.0.0.1:%d", port),
+		Handler: NewPanicMiddleware(mux),
 	}
 
-	errsChan := make(chan error)
-	signalsChan := make(chan os.Signal, 2)
-	signal.Notify(signalsChan, shutdownSignals...)
+	errs := make(chan error)
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
-	go listen(errsChan, server)
+	go listen(errs, server)
 
 	select {
-	case err := <-errsChan:
-		fmt.Printf("error happened: %v\n", err)
+	case err := <-errs:
+		log.Println("error happened:", err)
 		_ = shutdown(server)
-	case s := <-signalsChan:
-		fmt.Printf("signal received: %v\n", s)
-		signal.Stop(signalsChan)
+
+	case s := <-signals:
+		log.Println("signal received:", s)
+		signal.Stop(signals)
 		_ = shutdown(server)
 	}
+}
+
+func listen(errs chan<- error, server *http.Server) {
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		errs <- err
+	}
+}
+
+func shutdown(server *http.Server) error {
+	ctx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+
+	server.SetKeepAlivesEnabled(false)
+	return server.Shutdown(ctx)
 }

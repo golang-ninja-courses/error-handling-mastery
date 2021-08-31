@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
-const (
-	url = "http://127.0.0.1:8888/"
-)
+const url = "http://127.0.0.1:8888/"
 
 var (
 	regularRequest = []byte("regular")
@@ -17,28 +16,26 @@ var (
 	panicRequest   = []byte("panic")
 )
 
-func makeRequest(request []byte) {
+func main() {
+	for _, request := range [][]byte{regularRequest, errorRequest, panicRequest} {
+		if err := makeRequest(request); err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func makeRequest(request []byte) error {
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(request))
 	if err != nil {
-		fmt.Printf("request error: %v", err)
-		return
+		return fmt.Errorf("do post: %v", err)
 	}
-
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("read body error: %v", err)
-		return
+		return fmt.Errorf("read body: %v", err)
 	}
 
-	fmt.Printf("HTTP code: %d, Body: %s\n", resp.StatusCode, string(body))
-}
-
-func main() {
-	for _, request := range [][]byte{regularRequest, errorRequest, panicRequest} {
-		makeRequest(request)
-	}
+	log.Printf("HTTP code: %d, Body: %s", resp.StatusCode, string(body))
+	return resp.Body.Close()
 }
