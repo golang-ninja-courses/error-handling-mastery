@@ -12,6 +12,7 @@ require (
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2
 	github.com/gogo/status v1.1.0
+	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hydrogen18/memlistener v0.0.0-20200120041712-dcc25e7acd91
 	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible
