@@ -10,8 +10,8 @@ import (
 const prefix = "parsed_page_" // parsed_page_100
 
 var (
-	ErrInvalidFilename       = errors.New("invalid filename")
-	ErrIndexShouldBePositive = errors.New("index should be >= 0")
+	ErrInvalidFilename     = errors.New("invalid filename")
+	ErrIndexMustBePositive = errors.New("index must be >= 0")
 )
 
 func GetIndexFromFileName(fileName string) (int, error) {
@@ -28,7 +28,7 @@ func GetIndexFromFileName(fileName string) (int, error) {
 	}
 
 	if index < 0 {
-		return 0, fmt.Errorf("%w: got %d", ErrIndexShouldBePositive, index)
+		return 0, fmt.Errorf("%w: got %d", ErrIndexMustBePositive, index)
 	}
 
 	return int(index), nil

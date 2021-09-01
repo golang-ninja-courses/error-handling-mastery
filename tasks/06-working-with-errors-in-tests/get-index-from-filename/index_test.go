@@ -65,11 +65,13 @@ func TestGetIndexFromFileName(t *testing.T) {
 	}
 
 	for _, tt := range cases {
-		index, err := GetIndexFromFileName(tt.fileName)
-		require.ErrorIs(t, err, tt.expectedError)
-		assert.Equal(t, tt.expectedIndex, index)
+		t.Run(tt.fileName, func(t *testing.T) {
+			index, err := GetIndexFromFileName(tt.fileName)
+			require.ErrorIs(t, err, tt.expectedError)
+			assert.Equal(t, tt.expectedIndex, index)
 
-		_, ok := tt.expectedError.(*strconv.NumError)
-		assert.False(t, ok, "do not use *strconv.NumError directly, look for more specific errors")
+			_, ok := tt.expectedError.(*strconv.NumError)
+			assert.False(t, ok, "do not use *strconv.NumError directly, look for more specific errors")
+		})
 	}
 }
