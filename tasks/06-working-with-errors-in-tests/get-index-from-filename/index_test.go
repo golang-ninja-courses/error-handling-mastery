@@ -45,7 +45,6 @@ func TestGetIndexFromFileName(t *testing.T) {
 		{
 			fileName:      "parsed_page_0",
 			expectedIndex: 0,
-			expectedError: nil,
 		},
 		{
 			fileName:      "parsed_page_15.5",
@@ -59,6 +58,11 @@ func TestGetIndexFromFileName(t *testing.T) {
 		},
 		{
 			fileName:      fmt.Sprintf("parsed_page_%d", math.MaxInt32+1),
+			expectedIndex: 0,
+			expectedError: nil,
+		},
+		{
+			fileName:      "absolutely incorrect file name",
 			expectedIndex: 0,
 			expectedError: nil,
 		},
