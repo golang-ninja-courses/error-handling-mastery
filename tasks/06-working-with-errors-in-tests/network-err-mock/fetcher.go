@@ -10,7 +10,7 @@ import (
 
 var (
 	ErrFetchTimeout = errors.New("fetch url timeout")
-	ErrFetchTmpErr  = errors.New("fetch url temporary error")
+	ErrFetchTmp     = errors.New("fetch url temporary error")
 )
 
 type Client interface {
@@ -29,7 +29,7 @@ func FetchURL(ctx context.Context, client Client, url string) ([]byte, error) {
 			return nil, fmt.Errorf("%w: %v", ErrFetchTimeout, err)
 		}
 		if isTemporary(err) {
-			return nil, fmt.Errorf("%w: %v", ErrFetchTmpErr, err)
+			return nil, fmt.Errorf("%w: %v", ErrFetchTmp, err)
 		}
 		return nil, fmt.Errorf("do request: %w", err)
 	}

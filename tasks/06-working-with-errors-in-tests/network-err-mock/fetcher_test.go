@@ -26,7 +26,7 @@ func TestFetchURL(t *testing.T) {
 		},
 		{
 			client:      newClientMock(nil, newNetErrMock(true, false)),
-			expectedErr: ErrFetchTmpErr,
+			expectedErr: ErrFetchTmp,
 		},
 		{
 			client:      newClientMock(nil, errUnknownNetErr),
