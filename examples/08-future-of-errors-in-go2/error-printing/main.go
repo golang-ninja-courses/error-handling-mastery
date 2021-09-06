@@ -9,7 +9,7 @@ import (
 var КонецФайла = errors.New("конец файла")
 
 func main() {
-	var verbs = []string{"%s", "%q", "%+q", "%v", "%#v"}
+	verbs := []string{"%s", "%q", "%+q", "%v", "%#v"}
 
 	for _, err := range []error{КонецФайла, io.EOF} {
 		for _, f := range verbs {
