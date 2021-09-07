@@ -12,24 +12,20 @@ func CopyFileV3(src, dst string) (err error) {
 	if err != nil {
 		return fmt.Errorf("copy %q to %q: %v", src, dst, err)
 	}
-	defer func() {
-		if err2 := r.Close(); err2 != nil {
-			log.Printf("copy %q to %q: cannot close src file: %v", src, dst, err2)
-		}
-	}()
+	defer r.Close()
 
 	w, err := os.Create(dst)
 	if err != nil {
-		return fmt.Errorf("copy %q to %q: %v", src, dst, err)
+		return fmt.Errorf("copy %q to %q: create dst file: %v", src, dst, err)
 	}
 	defer func() {
-		if wErr := w.Close(); wErr != nil {
-			log.Printf("copy %q to %q: cannot close dst file: %v", src, dst, wErr)
+		if err := w.Close(); err != nil {
+			log.Printf("copy %q to %q: cannot close dst file: %v", src, dst, err)
 		}
 
 		if err != nil {
-			if err2 := os.Remove(dst); err2 != nil {
-				log.Printf("copy %q to %q: cannot remove dst file : %v", src, dst, err2)
+			if err := os.Remove(dst); err != nil {
+				log.Printf("copy %q to %q: cannot remove dst file : %v", src, dst, err)
 			}
 		}
 	}()
