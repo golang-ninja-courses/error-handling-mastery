@@ -24,7 +24,7 @@ func (n NotFoundError) StatusCode() int {
 Тип NotFoundError имеет множество методов T:
 - StatusCode
 
-Тип NotFoundError имеет множество методов T + *T:
+Тип *NotFoundError имеет множество методов T + *T:
 - Error
 - StatusCode
 
@@ -34,7 +34,7 @@ func main() {
 	var err HTTPError = &NotFoundError{}
 	fmt.Println(err.StatusCode(), err.Error()) // 404 Not Found
 
-	// Не скопилируется:
+	// Не скомпилируется:
 	// var _ HTTPError = NotFoundError{}
 	// cannot use NotFoundError{} (type NotFoundError) as type HTTPError in assignment:
 	//     NotFoundError does not implement HTTPError (Error method has pointer receiver)
