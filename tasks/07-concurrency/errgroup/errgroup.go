@@ -24,6 +24,8 @@ type Task interface {
 // Run выполняет задачи из очереди tasks с некоторыми условиями:
 // – параллельно обрабатываются workersCount задач;
 // – задача Task выполняется не дольше Task.ExecutionTimeout();
+// – если во время выполнения задачи (при вызове метода Task.Handle()) возникает ошибка, то наружу она не возвращается.
+//	Считаем, что мы её условно "логируем" и "кладём" задачу в какой-нибудь dlq;
 // – при возникновении паники возвращает errFatal;
 func Run(ctx context.Context, workersCount int, tasks <-chan Task) error {
 	return nil
