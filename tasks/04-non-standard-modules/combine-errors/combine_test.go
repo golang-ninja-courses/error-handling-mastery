@@ -134,7 +134,7 @@ func TestCombine_Immutable(t *testing.T) {
   - an error 3
 `)
 
-	errs = append(errs, errors.New("an error 4"))
+	errs = append(errs, errors.New("an error 4")) //nolint:ineffassign,staticcheck,wastedassign
 	assertErrFormat(t, combinedErr, `EOF
   - an error 2
   - an error 3

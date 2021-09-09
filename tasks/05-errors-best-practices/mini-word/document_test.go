@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func ExampleDoc() {
+func ExampleDocument() {
 	d := NewDocument()
 	d.WriteText("Hello")
 

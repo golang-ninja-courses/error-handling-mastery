@@ -20,7 +20,7 @@ func main() {
 		go func(catData string) { // разбираем котиков в несколько горутин
 			defer wg.Done()
 			cat := Cat{}
-			if err := json.Unmarshal([]byte(catData), &cat); err != nil { //nolint:staticcheck
+			if err := json.Unmarshal([]byte(catData), &cat); err != nil {
 				// Случилась ошибка, что делать?
 			}
 			catsChan <- cat

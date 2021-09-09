@@ -11,6 +11,7 @@ issues:
   exclude:
     - G107 # Potential HTTP request made with variable url
     - G404 # Weak random number generator
+    - SA9003 # Empty branch
 
   exclude-rules:
     - source: .*github\.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go # Imports
@@ -34,6 +35,10 @@ issues:
       linters:
         - deadcode
         - unused
+
+    - path: tasks
+      linters:
+        - typecheck
 
     - path: _test\.go
       linters:
@@ -104,7 +109,6 @@ linters:
     - tparallel
     - typecheck
     - unconvert
-    - unparam
     - unused
     - varcheck
     - wastedassign
