@@ -13,10 +13,12 @@ type User struct {
 }
 
 func GetUserByIDOriginal(ctx context.Context, uid UserID) (*User, error) {
-	err := sql.ErrNoRows
-
-	if err == sql.ErrNoRows {
+	if err := selectUser(); err == sql.ErrNoRows {
 		return nil, fmt.Errorf("exec query: %w", err)
 	}
 	return &User{ID: "42"}, nil
+}
+
+func selectUser() error {
+	return sql.ErrNoRows
 }

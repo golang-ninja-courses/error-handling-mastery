@@ -1,3 +1,4 @@
+//go:build pkg
 // +build pkg
 
 package main

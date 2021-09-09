@@ -25,7 +25,7 @@ func main() {
 }
 
 func makeRequest(request []byte) error {
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(request))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(request)) //nolint:noctx
 	if err != nil {
 		return fmt.Errorf("do post: %v", err)
 	}

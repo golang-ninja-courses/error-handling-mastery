@@ -1,4 +1,4 @@
-package cockroach_grpc
+package cockroachgrpc
 
 import (
 	"context"

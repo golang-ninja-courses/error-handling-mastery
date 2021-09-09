@@ -1,3 +1,4 @@
+//go:build pkg.msg.stack
 // +build pkg.msg.stack
 
 package main

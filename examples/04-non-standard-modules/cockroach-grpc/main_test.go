@@ -1,10 +1,10 @@
-package cockroach_grpc
+package cockroachgrpc
 
 import (
+	"context"
 	"net"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/cockroachdb/errors/grpc/middleware"
 	"github.com/hydrogen18/memlistener"
@@ -21,10 +21,14 @@ func TestMain(m *testing.M) {
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(middleware.UnaryServerInterceptor))
 	RegisterEchoerServer(grpcServer, srv)
 
-	go grpcServer.Serve(lis)
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			panic(err)
+		}
+	}()
 
 	dialOpts := []grpc.DialOption{
-		grpc.WithDialer(func(target string, d time.Duration) (net.Conn, error) {
+		grpc.WithContextDialer(func(_ context.Context, _ string) (net.Conn, error) {
 			return lis.Dial("", "")
 		}),
 		grpc.WithInsecure(),
@@ -41,7 +45,9 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 
 	grpcServer.Stop()
-	clientConn.Close()
+	if err := clientConn.Close(); err != nil {
+		panic(err)
+	}
 
 	os.Exit(code)
 }

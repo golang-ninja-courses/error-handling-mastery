@@ -1,3 +1,4 @@
+//nolint:gocritic,ineffassign,staticcheck,wastedassign
 package main
 
 import (

@@ -10,11 +10,11 @@ var (
 	ErrInvalidID        error = &InvalidIDError{Err{"invalid job id"}}
 )
 
-type Err struct {
+type Err struct { //nolint:errname
 	msg string
 }
 
-func (e Err) Error() string {
+func (e *Err) Error() string {
 	return e.msg
 }
 

@@ -17,7 +17,7 @@ func UnaryServerInterceptor(
 ) (interface{}, error) {
 	resp, err := handler(ctx, req)
 	if err == nil {
-		return resp, err
+		return resp, nil
 	}
 
 	st, ok := status.FromError(err)

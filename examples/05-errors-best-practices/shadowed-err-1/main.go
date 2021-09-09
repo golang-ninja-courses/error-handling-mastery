@@ -13,6 +13,7 @@ type User struct {
 	ID UserID
 }
 
+//nolint:typecheck
 func SaveUser(u User) (err error) {
 	if !isValidID(u.ID) {
 		err := fmt.Errorf("%w: %v", ErrInvalidUserID, u.ID) // err is shadowed during return

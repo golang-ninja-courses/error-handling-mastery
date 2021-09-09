@@ -1,3 +1,4 @@
+//go:build cockroach
 // +build cockroach
 
 package main

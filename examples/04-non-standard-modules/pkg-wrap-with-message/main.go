@@ -7,11 +7,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-var internalErr = stderrors.New("ooops, an error on level 1")
+var errInternal = stderrors.New("ooops, an error on level 1")
 
 func GimmeDeepError(depth int) error {
 	if depth == 1 {
-		return errors.WithStack(internalErr)
+		return errors.WithStack(errInternal)
 	}
 	return errors.WithMessagef(GimmeDeepError(depth-1), "error happened on level %d", depth)
 }

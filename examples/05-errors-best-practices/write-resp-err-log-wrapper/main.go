@@ -24,7 +24,6 @@ func (w LogWriter) Write(p []byte) {
 	if err != nil {
 		log.Println("cannot write response: " + err.Error())
 	}
-	return
 }
 
 func main() {
@@ -69,6 +68,6 @@ func main() {
 	}
 }
 
-func writeOK(w http.ResponseWriter) {
-	w.Write([]byte(`{"msg": "OK"}`))
+func writeOK(w http.ResponseWriter) { //nolint:deadcode,unused
+	_, _ = w.Write([]byte(`{"msg": "OK"}`))
 }

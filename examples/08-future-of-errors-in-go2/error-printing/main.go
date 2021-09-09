@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-var КонецФайла = errors.New("конец файла")
+var КонецФайла = errors.New("конец файла") //nolint:asciicheck,errname,revive,stylecheck
 
 func main() {
 	verbs := []string{"%s", "%q", "%+q", "%v", "%#v"}

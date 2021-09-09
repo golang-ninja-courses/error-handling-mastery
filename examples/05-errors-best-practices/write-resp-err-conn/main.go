@@ -18,11 +18,13 @@ func main() {
 		time.Sleep(3 * time.Second) // Wait for server start up.
 
 		client := &http.Client{Timeout: time.Second}
-		_, err := client.Get("http://localhost:8080")
+		resp, err := client.Get("http://localhost:8080") //nolint:noctx
 		if err != nil {
 			// context deadline exceeded (Client.Timeout exceeded while awaiting headers)
 			log.Println("cannot do GET: " + err.Error())
+			return
 		}
+		_ = resp.Body.Close()
 	}()
 
 	if err := http.ListenAndServe(":8080", http.DefaultServeMux); err != nil {

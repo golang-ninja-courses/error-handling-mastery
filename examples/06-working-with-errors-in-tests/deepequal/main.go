@@ -9,14 +9,14 @@ import (
 	"reflect"
 )
 
-var MyEOF = errors.New(io.EOF.Error())
+var MyEOF = errors.New(io.EOF.Error()) //nolint:errname,revive,stylecheck
 
 type Errors []error            // Комментарий для поддержки отсутствия новой строки между определением типа и методом.
 func (e Errors) Error() string { return "errors" }
 
-func main() {
+func main() { //nolint:funlen
 	cases := []struct {
-		name   string
+		name   string ``
 		lhs    error
 		rhs    error
 		deepEq bool

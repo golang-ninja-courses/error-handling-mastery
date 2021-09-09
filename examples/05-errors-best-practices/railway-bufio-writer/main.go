@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+//nolint:errcheck
 func main() {
 	b := bufio.NewWriter(os.Stdout)
 

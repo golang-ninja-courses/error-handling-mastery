@@ -10,9 +10,7 @@ import (
 var errNotFound = errors.New("obj not found")
 
 func GetUserByIDOwnPrivateError(ctx context.Context, uid UserID) (*User, error) {
-	err := sql.ErrNoRows
-
-	if err == sql.ErrNoRows {
+	if err := selectUser(); err == sql.ErrNoRows {
 		return nil, fmt.Errorf("exec query: %w: %v", errNotFound, err)
 	}
 	return &User{ID: "42"}, nil
