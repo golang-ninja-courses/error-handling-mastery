@@ -1,4 +1,4 @@
-package cockroach_grpc
+package cockroachgrpc
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 var (
 	ErrCantEcho = errors.New("unable to echo")
 	ErrTooLong  = errors.New("text is too long")
-	ErrInternal = errors.New("internal error!")
+	ErrInternal = errors.New("internal error")
 )
 
 type EchoServer struct{}

@@ -17,7 +17,7 @@ func main() {
 }
 
 func httpGet(url string) ([]byte, error) {
-	res, err := http.Get(url)
+	res, err := http.Get(url) //nolint:noctx
 	if err != nil {
 		return nil, fmt.Errorf("cannot do GET: %v", err)
 	}

@@ -1,3 +1,4 @@
+//go:build std
 // +build std
 
 package main

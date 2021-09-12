@@ -1,5 +1,5 @@
-# На момент написания курса версия линтера:
-# golangci-lint has version 1.41.1 built from a2074809 on 2021-06-19T16:01:50Z
+# На момент завершения работы над курсом версия линтера:
+# golangci-lint has version 1.42.1 built from 54f4301d on 2021-09-06T17:05:10Z
 
 run:
   skip-dirs-use-default: false
@@ -9,32 +9,65 @@ issues:
   max-same-issues: 0
 
   exclude:
-    - "exported:"
-    - G404 # weak random number generator
+    - G107 # Potential HTTP request made with variable url
+    - G404 # Weak random number generator
+    - SA9003 # Empty branch
 
   exclude-rules:
+    - source: .*github\.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go # Imports
+      linters:
+        - lll
+
     - path: examples/03-go-errors-concept/errorf-\d/main\.go
       linters:
         - govet
+
+    - path: examples/04-non-standard-modules/pkg-wrap-vs-fmt-3
+      linters:
+        - govet
+
+    - path: examples/05-errors-best-practices/ruleguard-wrap
+      linters:
+        - deadcode
+        - unused
+
+    - path: examples/08-future-of-errors-in-go2
+      linters:
+        - deadcode
+        - unused
+
+    - path: tasks
+      linters:
+        - typecheck
 
     - path: _test\.go
       linters:
         - dupl
         - funlen
-        - gosec
+        - lll
+
+linters-settings:
+  lll:
+    line-length: 130
+
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: snake
 
 linters:
   disable-all: true
   enable:
     - asciicheck
     - bodyclose
+    - cyclop
     - deadcode
     - depguard
     - dogsled
     - dupl
     - durationcheck
     - errcheck
-    - errorlint
     - errname
     - exportloopref
     - funlen
@@ -76,7 +109,6 @@ linters:
     - tparallel
     - typecheck
     - unconvert
-    - unparam
     - unused
     - varcheck
     - wastedassign

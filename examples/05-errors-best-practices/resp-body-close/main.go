@@ -3,27 +3,26 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
 func main() {
-	res, err := http.Get("http://www.golang-courses.ru/")
+	res, err := http.Get("http://www.golang-courses.ru/") //nolint:noctx
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	defer res.Body.Close()
 	/*
 		defer func() {
 			if err := res.Body.Close(); err != nil {
-				log.Println("cannot close response body: " + err.Error())
+				log.Println("cannot close response body: " + err.Err())
 			}
 		}()
 	*/
 
 	index, err := io.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	fmt.Println(string(index)[:300])

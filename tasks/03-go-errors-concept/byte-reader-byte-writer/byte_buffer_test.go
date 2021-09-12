@@ -64,7 +64,7 @@ func TestByteBufferReadFromEmptyBuffer(t *testing.T) {
 }
 
 func TestEndOfBufferError(t *testing.T) {
-	assert.NotEmpty(t, new(EndOfBuffer).Error())
+	assert.NotEmpty(t, new(EndOfBufferError).Error())
 }
 
 func TestMaxSizeExceededError(t *testing.T) {
@@ -72,7 +72,7 @@ func TestMaxSizeExceededError(t *testing.T) {
 }
 
 func isEndOfBuffer(err error) bool {
-	_, ok := err.(*EndOfBuffer)
+	_, ok := err.(*EndOfBufferError)
 	return ok
 }
 

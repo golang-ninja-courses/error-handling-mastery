@@ -12,9 +12,9 @@ func (e *MaxSizeExceededError) Error() string {
 	return fmt.Sprintf("buffer max size exceeded: %d > %d", e.desiredLen, bufferMaxSize)
 }
 
-type EndOfBuffer struct{}
+type EndOfBufferError struct{}
 
-func (b *EndOfBuffer) Error() string {
+func (b *EndOfBufferError) Error() string {
 	return "end of buffer"
 }
 
@@ -36,7 +36,7 @@ func (b *ByteBuffer) Write(p []byte) (int, error) {
 
 func (b *ByteBuffer) Read(p []byte) (int, error) {
 	if b.offset >= len(b.buffer) {
-		return 0, new(EndOfBuffer)
+		return 0, new(EndOfBufferError)
 	}
 
 	n := copy(p, b.buffer[b.offset:])
@@ -53,7 +53,7 @@ func main() {
 	p := make([]byte, 3)
 	for {
 		n, err := b.Read(p)
-		if _, ok := err.(*EndOfBuffer); ok {
+		if _, ok := err.(*EndOfBufferError); ok {
 			break
 		}
 		fmt.Print(string(p[:n])) // hello hello hello

@@ -16,7 +16,7 @@ func main() {
 	}
 
 	w := bufio.NewWriter(f)
-	w.WriteString("bad")
+	w.WriteString("bad") //nolint:errcheck
 
 	for i := 0; i < 5; i++ {
 		if err := w.Flush(); err != nil {

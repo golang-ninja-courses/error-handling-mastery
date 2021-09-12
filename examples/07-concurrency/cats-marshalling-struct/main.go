@@ -16,21 +16,21 @@ type CatResult struct {
 }
 
 func main() {
-	catsJson := []string{`{"name": "Bobby"}`, `"name": "Billy"`}
-	catsChan := make(chan CatResult, len(catsJson))
+	catsJSON := []string{`{"name": "Bobby"}`, `"name": "Billy"`}
+	catsChan := make(chan CatResult, len(catsJSON))
 	wg := &sync.WaitGroup{}
-	wg.Add(len(catsJson))
+	wg.Add(len(catsJSON))
 
-	for _, catJson := range catsJson {
-		go func(catJson string) {
+	for _, catData := range catsJSON {
+		go func(catData string) {
 			defer wg.Done()
 			cat := Cat{}
-			if err := json.Unmarshal([]byte(catJson), &cat); err != nil {
+			if err := json.Unmarshal([]byte(catData), &cat); err != nil {
 				catsChan <- CatResult{Err: err} // случилась ошибка
 				return
 			}
 			catsChan <- CatResult{Cat: cat} // всё прошло хорошо
-		}(catJson)
+		}(catData)
 	}
 
 	wg.Wait()

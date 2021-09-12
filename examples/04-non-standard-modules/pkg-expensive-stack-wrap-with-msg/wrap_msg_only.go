@@ -1,3 +1,4 @@
+//go:build pkg.msg.only
 // +build pkg.msg.only
 
 package main

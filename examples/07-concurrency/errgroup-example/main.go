@@ -18,13 +18,11 @@ const (
 	paymentsQueueWorkersCount = 2
 )
 
-var (
-	errTerminated = errors.New("process was terminated")
-)
+var errTerminated = errors.New("process was terminated")
 
 type queue struct{}
 
-func NewQueue() *queue {
+func newQueue() *queue {
 	return &queue{}
 }
 
@@ -60,21 +58,21 @@ func main() {
 	g, ctx := errgroup.WithContext(context.Background())
 
 	for i := 0; i < defaultQueueWorkersCount; i++ {
-		defaultQueue := NewQueue()
+		defaultQueue := newQueue()
 		g.Go(func() error {
 			return defaultQueue.Run(ctx, 3*time.Second)
 		})
 	}
 
 	for i := 0; i < scheduleQueueWorkersCount; i++ {
-		scheduleQueue := NewQueue()
+		scheduleQueue := newQueue()
 		g.Go(func() error {
 			return scheduleQueue.Run(ctx, 3*time.Second)
 		})
 	}
 
 	for i := 0; i < paymentsQueueWorkersCount; i++ {
-		paymentsQueue := NewQueue()
+		paymentsQueue := newQueue()
 		g.Go(func() error {
 			return paymentsQueue.Run(ctx, 3*time.Second)
 		})

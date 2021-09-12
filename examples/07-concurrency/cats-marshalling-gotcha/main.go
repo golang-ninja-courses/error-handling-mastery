@@ -11,20 +11,20 @@ type Cat struct {
 }
 
 func main() {
-	catsJson := []string{`{"name": "Bobby"}`, `"name": "Billy"`}
-	catsChan := make(chan Cat, len(catsJson))
+	catsJSON := []string{`{"name": "Bobby"}`, `"name": "Billy"`}
+	catsChan := make(chan Cat, len(catsJSON))
 	wg := &sync.WaitGroup{}
-	wg.Add(len(catsJson))
+	wg.Add(len(catsJSON))
 
 	var err error // Заводим специальную переменную err для хранения ошибки
 
-	for _, catJson := range catsJson {
-		go func(catJson string) {
+	for _, catData := range catsJSON {
+		go func(catData string) {
 			defer wg.Done()
 			cat := Cat{}
-			err = json.Unmarshal([]byte(catJson), &cat)
+			err = json.Unmarshal([]byte(catData), &cat)
 			catsChan <- cat
-		}(catJson)
+		}(catData)
 	}
 
 	wg.Wait()

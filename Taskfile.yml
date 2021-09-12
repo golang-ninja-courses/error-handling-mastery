@@ -28,9 +28,17 @@ tasks:
       - gci -w . > /dev/null
 
   lint:
-    cmds:
-      - echo "Lint..."
-      - golangci-lint run --fix ./...
+    deps:
+      - lint:examples
+      - lint:tasks
+
+  lint:examples:
+    - echo "Lint examples..."
+    - golangci-lint run --build-tags pkg,pkg.msg.stack --fix ./examples/...
+
+  lint:tasks:
+    - echo "Lint tasks..."
+    - golangci-lint run --fix ./tasks/...
 
   lint:dir:
     - echo "Lint..."

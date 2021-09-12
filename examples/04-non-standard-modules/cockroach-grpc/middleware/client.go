@@ -22,8 +22,7 @@ func UnaryClientInterceptor(
 	st := status.Convert(err)
 	var reconstituted error
 	for _, det := range st.Details() {
-		switch t := det.(type) {
-		case *errors.EncodedError:
+		if t, ok := det.(*errors.EncodedError); ok {
 			reconstituted = errors.DecodeError(ctx, *t)
 		}
 	}

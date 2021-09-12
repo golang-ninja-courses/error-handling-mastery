@@ -1,3 +1,4 @@
+//nolint:ineffassign,wastedassign
 package main
 
 import (
