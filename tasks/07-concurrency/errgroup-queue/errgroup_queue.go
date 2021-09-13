@@ -1,7 +1,7 @@
 // Нажмите "Отправить" и задача будет принята.
 // Авторское решение можно будет посмотреть в решениях.
 
-package errgroup
+package errgroup_queue
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var errFatal error
+var ErrFatal = errors.New("fatal error")
 
 type Task interface {
 	// Handle выполняет задачу.
@@ -33,5 +33,15 @@ func Run(ctx context.Context, workersCount int, tasks <-chan Task) error {
 	_ = errgroup.WithContext
 
 	// Реализуй меня.
+	return nil
+}
+
+// Process выполняет задачу task с некоторыми условиями:
+// – задача task выполняется не дольше Task.ExecutionTimeout();
+// – если во время выполнения задачи возникает ошибка, то наружу она не возвращается. Считаем, что мы её условно
+//	"логируем" и/или "кладём" в какой-нибудь dlq;
+// – при возникновении паники возвращает ErrFatal;
+// – если контекст ctx закрыт, то возвращает ctx.Err().
+func Process(ctx context.Context, task Task) error {
 	return nil
 }
