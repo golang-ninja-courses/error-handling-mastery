@@ -5,7 +5,7 @@ BIN = ./main.out
 .DEFAULT_GOAL := run
 
 build:
-	docker run \
+	@docker run \
 		--platform linux/amd64 \
 		--workdir $(HOME) \
 		-v $(PWD):$(HOME) \
@@ -13,15 +13,15 @@ build:
 		 mooreryan/valgrind -o $(BIN) $(SRC)
 
 run: build
-	docker run \
+	@docker run \
 		  -i \
 		  --platform linux/amd64 \
 		  --workdir $(HOME) \
 		  -v $(PWD):$(HOME) \
-		  mooreryan/valgrind --help --tool=memcheck --leak-check=full $(BIN)
+		  mooreryan/valgrind --tool=memcheck --leak-check=full $(BIN)
 
 check: build
-	for user_request in ./testdata/*.json ; do \
+	@for user_request in ./testdata/*.json ; do \
 		docker run \
 		  -i \
 		  --platform linux/amd64 \

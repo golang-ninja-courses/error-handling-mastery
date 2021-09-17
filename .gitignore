@@ -1,5 +1,5 @@
 .idea
 .DS_Store
-a.out
+*.out
 main
 *.gch
