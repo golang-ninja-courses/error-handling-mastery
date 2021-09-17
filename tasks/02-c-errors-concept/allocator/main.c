@@ -1,4 +1,3 @@
-// gcc main.c -o main
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,12 +15,11 @@ int main()
 
 	void *p = allocate(uid, size);
 	if (p == NULL) {
-		printf("allocation error: %s", strerror(errno));
-		exit(1);
+		printf("allocation error: %s\n", strerror(errno));
+	} else {
+	    printf("allocation was successful for %zu bytes\n", size);
+	    free(p);
 	}
-
-	printf("allocation was successful for %zu bytes", size);
-	free(p);
 
     return 0;
 }
