@@ -1,4 +1,3 @@
-// gcc main.c -o main
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,15 +16,15 @@ int main()
     void *p = NULL;
 	errno_t err = allocate(uid, size, &p);
 	if (err != 0) {
-	    printf("allocation error: %s", strerror(err));
-	    exit(1);
+	    printf("allocation error: %s\n", strerror(err));
+	    exit(0); // Считаем валидной ситуацией.
 	}
 	if (p == NULL) {
 		printf("memory pointer is NULL after allocation");
 		exit(1);
 	}
 
-	printf("allocation was successful for %zu bytes", size);
+	printf("allocation was successful for %zu bytes\n", size);
 	free(p);
 
     return 0;
