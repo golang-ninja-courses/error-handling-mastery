@@ -1,4 +1,3 @@
-// gcc main.c -o main
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,7 +10,7 @@ int main()
 
     if (fgets(request_data, n, stdin) == NULL) {
         return EXIT_FAILURE;
-    };
+    }
 
     char *resp = NULL;
     http_error_t err = get_user_handler(request_data, &resp);
