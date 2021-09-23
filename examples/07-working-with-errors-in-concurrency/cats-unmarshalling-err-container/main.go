@@ -40,12 +40,12 @@ func main() {
 		close(catsCh)
 	}()
 
-	for catResult := range catsCh {
-		if catResult.Err != nil {
-			fmt.Println("ERROR:", catResult.Err)
+	for catContainer := range catsCh {
+		if catContainer.Err != nil {
+			fmt.Println("ERROR:", catContainer.Err)
 			continue
 		}
-		fmt.Println(catResult.Cat)
+		fmt.Println(catContainer.Cat)
 	}
 }
 
