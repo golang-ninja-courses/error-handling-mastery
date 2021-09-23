@@ -53,14 +53,14 @@ func main() {
 		close(catsCh)
 	}()
 
-	for catResult := range catsCh {
+	for catEnvelope := range catsCh {
 		// Мы можем как угодно менять копии, полученные после распаковки,
 		// не влияя на оригинальный контейнер.
-		c, err := catResult.Unpack()
+		c, err := catEnvelope.Unpack()
 		c = Cat{Name: "Hacked"}
 		err = errors.New("hacked")
 
-		c, err = catResult.Unpack()
+		c, err = catEnvelope.Unpack()
 		if err != nil {
 			fmt.Println("ERROR:", err)
 			continue
