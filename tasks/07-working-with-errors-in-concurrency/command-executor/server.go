@@ -45,11 +45,14 @@ func (s *Server) Wait() {
 	s.wg.Wait()
 }
 
+// ProcessCommandsStream получает команды из транспорта, отдаёт их на выполнение,
+// а параллельно с этим: слушает канал результатов команд, считает по ним метрики,
+// на основе CommandResult формирует ProtoCommandResult и отправляет назад в транспорт.
 func (s *Server) ProcessCommandsStream(t ITransport) error {
 	ctx := t.Context()
 	resultsCh := s.executor.ResultsCh()
 
-	// Реализуй цикл обработки результатов команд из resultsCh.
+	// Реализуй цикл обработки результатов команд из resultsCh и отправки их в транспорт.
 	// Реализуй цикл получения команд из транспорта.
 
 	_, _ = ctx, resultsCh
