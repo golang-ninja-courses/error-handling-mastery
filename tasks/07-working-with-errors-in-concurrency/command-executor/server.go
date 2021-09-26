@@ -53,7 +53,7 @@ func (s *Server) ProcessCommandsStream(t ITransport) error {
 	resultsCh := s.executor.ResultsCh()
 
 	// Реализуй цикл обработки результатов команд из resultsCh и отправки их в транспорт.
-	// Реализуй цикл получения команд из транспорта.
+	// Реализуй цикл получения команд из транспорта и их выполнения с помощью s.executor.
 
 	_, _ = ctx, resultsCh
 	return nil
