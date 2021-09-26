@@ -8,19 +8,27 @@ import (
 )
 
 func main() {
-	eg := errgroup.Group{}
+	if err := work(); err != nil {
+		fmt.Println(err) // something bad has happened
+	}
+}
+
+func work() error {
+	var eg errgroup.Group
 
 	eg.Go(func() error {
-		// Что-то делаем
+		// Выполняем какую-то операцию, завершившуюся с ошибкой.
+		// ...
 		return errors.New("something bad has happened")
 	})
 
 	eg.Go(func() error {
-		// Что-то делаем
+		// Выполняем какую-то операцию, завершившуюся без ошибки.
+		// ...
 		return nil
 	})
 
-	if err := eg.Wait(); err != nil { // Дожидаемся окончания работ и проверяем, всё ли выполнилось без ошибок
-		fmt.Println(err)
-	}
+	// Дожидаемся окончания работ.
+	// Возвращаем ошибку от любой из операций (если ошибка произошла).
+	return eg.Wait()
 }

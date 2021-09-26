@@ -7,30 +7,38 @@ import (
 )
 
 func main() {
-	// Будем выполнять два параллельных действия
-	wg := &sync.WaitGroup{}
-	wg.Add(2)
-	errChan := make(chan error, 2)
+	if err := work(); err != nil {
+		fmt.Println(err) // something bad has happened
+	}
+}
 
+func work() error {
+	// Будем выполнять два параллельных действия.
+	var wg sync.WaitGroup
+	errsCh := make(chan error, 2)
+
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		// Что-то делаем
-		errChan <- errors.New("something bad has happened")
+		// Выполняем какую-то операцию, завершившуюся с ошибкой.
+		// ...
+		errsCh <- errors.New("something bad has happened")
 	}()
 
+	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		// Что-то делаем
-		errChan <- nil
+		// Выполняем какую-то операцию, завершившуюся без ошибки.
+		// ...
 	}()
 
-	wg.Wait() // Дожидаемся окончания работ
+	wg.Wait() // Дожидаемся окончания работ.
 
-	close(errChan)
-
-	for err := range errChan { // Проверяем, всё ли выполнилось без ошибок
-		if err != nil {
-			fmt.Println(err)
-		}
+	// Возвращаем ошибку от любой из операций (если ошибка произошла).
+	select {
+	case err := <-errsCh:
+		return err
+	default:
+		return nil
 	}
 }
