@@ -3,9 +3,10 @@ package errctx_test
 import (
 	"io"
 
-	errctx "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/05-errors-best-practices/error-context"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	errctx "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/05-errors-best-practices/error-context"
 )
 
 func ExampleAppendTo() {

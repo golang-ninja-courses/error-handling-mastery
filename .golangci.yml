@@ -47,6 +47,9 @@ issues:
         - lll
 
 linters-settings:
+  gci:
+    local-prefixes: github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go
+
   lll:
     line-length: 130
 

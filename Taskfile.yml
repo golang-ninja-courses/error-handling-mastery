@@ -25,12 +25,12 @@ tasks:
     cmds:
       - echo "Fmt..."
       - gofumpt -w .
-      - gci -w . > /dev/null
+      - gci -w -local github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go . > /dev/null
 
   lint:
-    deps:
-      - lint:examples
-      - lint:tasks
+    cmds:
+      - task: lint:examples
+      - task: lint:tasks
 
   lint:examples:
     - echo "Lint examples..."
