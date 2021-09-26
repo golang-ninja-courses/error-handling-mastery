@@ -17,7 +17,7 @@ type CatContainer struct {
 
 func main() {
 	catsJSONs := []string{`{"name": "Bobby"}`, `"name": "Billy"`, `{"name": "Васёк"}`}
-	catsCh := make(chan CatContainer, len(catsJSONs))
+	catsCh := make(chan CatContainer)
 
 	var wg sync.WaitGroup
 	wg.Add(len(catsJSONs))

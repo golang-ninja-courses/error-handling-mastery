@@ -30,7 +30,7 @@ func (c CatEnvelope) Unpack() (Cat, error) {
 
 func main() {
 	catsJSONs := []string{`{"name": "Bobby"}`, `"name": "Billy"`, `{"name": "Васёк"}`}
-	catsCh := make(chan CatEnvelope, len(catsJSONs))
+	catsCh := make(chan CatEnvelope)
 
 	var wg sync.WaitGroup
 	wg.Add(len(catsJSONs))
