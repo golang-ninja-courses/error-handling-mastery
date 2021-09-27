@@ -8,9 +8,11 @@ import (
 )
 
 const (
-	workersCount = 2
+	// Поиграйтесь с числами ниже.
 
-	urlsCount  = 10
+	workersCount = 2
+	urlsCount    = 100
+
 	googleURL  = "https://www.google.com"
 	invalidURL = "https://invalid_url"
 )
