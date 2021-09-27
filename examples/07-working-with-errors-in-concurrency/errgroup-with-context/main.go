@@ -57,7 +57,7 @@ func main() {
 
 				case url := <-urls:
 					if _, err := networkRequest(ctx, url); err != nil {
-						return fmt.Errorf("network request %s error: %w", url, err)
+						return fmt.Errorf("network request %s error: %v", url, err)
 					}
 				}
 			}
