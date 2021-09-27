@@ -10,7 +10,7 @@ import (
 const (
 	workersCount = 2
 
-	urlsCount  = 100
+	urlsCount  = 10
 	googleURL  = "https://www.google.com"
 	invalidURL = "https://invalid_url"
 )
@@ -55,7 +55,11 @@ func main() {
 				case <-ctx.Done():
 					return ctx.Err()
 
-				case url := <-urls:
+				case url, ok := <-urls:
+					if !ok {
+						return nil
+					}
+
 					if _, err := networkRequest(ctx, url); err != nil {
 						return fmt.Errorf("network request %s error: %v", url, err)
 					}
