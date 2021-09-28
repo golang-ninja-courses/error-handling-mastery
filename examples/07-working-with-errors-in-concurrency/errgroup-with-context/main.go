@@ -52,21 +52,12 @@ func main() {
 
 	for i := 0; i < workersCount; i++ {
 		eg.Go(func() error {
-			for {
-				select {
-				case <-ctx.Done():
-					return ctx.Err()
-
-				case url, ok := <-urls:
-					if !ok {
-						return nil
-					}
-
-					if _, err := networkRequest(ctx, url); err != nil {
-						return fmt.Errorf("network request %s error: %v", url, err)
-					}
+			for url := range urls {
+				if _, err := networkRequest(ctx, url); err != nil {
+					return fmt.Errorf("network request %s error: %v", url, err)
 				}
 			}
+			return nil
 		})
 	}
 
