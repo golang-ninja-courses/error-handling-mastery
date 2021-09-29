@@ -1,4 +1,4 @@
-package errgroup_fill
+package orders
 
 import (
 	"context"
@@ -7,11 +7,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
-	testTimeout       = 100 * time.Millisecond
-	funcExecutionTime = 50 * time.Millisecond
+	testTimeout = 100 * time.Millisecond
 
 	buyerName    = "John Doe"
 	sellerName   = "Jane Doe"
@@ -19,15 +19,9 @@ const (
 )
 
 var (
-	buyerNameFunc = func(ctx context.Context) (string, error) {
-		return buyerName, nil
-	}
-	buyerAddressFunc = func(ctx context.Context) (string, error) {
-		return buyerAddress, nil
-	}
-	sellerNameFunc = func(ctx context.Context) (string, error) {
-		return sellerName, nil
-	}
+	buyerNameFunc    = func(ctx context.Context) (string, error) { return buyerName, nil }
+	buyerAddressFunc = func(ctx context.Context) (string, error) { return buyerAddress, nil }
+	sellerNameFunc   = func(ctx context.Context) (string, error) { return sellerName, nil }
 
 	slowBuyerNameFunc = func(ctx context.Context) (string, error) {
 		select {
@@ -38,60 +32,62 @@ var (
 		}
 	}
 
+	errNotFound = errors.New("not found error")
+
 	errFunc = func(ctx context.Context) (string, error) {
-		return "", errAny
+		return "", errNotFound
 	}
 
-	order = Order{
+	filledOrder = Order{
 		BuyerName:    buyerName,
 		BuyerAddress: buyerAddress,
 		SellerName:   sellerName,
 	}
-
-	errAny = errors.New("any error")
 )
 
 func TestGetOrder(t *testing.T) {
 	cases := []struct {
 		name             string
-		buyerNameFunc    func(context.Context) (string, error)
-		buyerAddressFunc func(context.Context) (string, error)
-		sellerNameFunc   func(context.Context) (string, error)
+		buyerNameFunc    StringValueGetter
+		buyerAddressFunc StringValueGetter
+		sellerNameFunc   StringValueGetter
 		orderExpected    Order
 		errExpected      error
-		checkCtxErrorNil bool
+		ctxErrExpected   error
 	}{
 		{
 			name:             "no errors",
 			buyerNameFunc:    buyerNameFunc,
 			buyerAddressFunc: buyerAddressFunc,
 			sellerNameFunc:   sellerNameFunc,
-			orderExpected:    order,
+			orderExpected:    filledOrder,
 		},
 		{
 			name:             "buyer name error",
 			buyerNameFunc:    errFunc,
 			buyerAddressFunc: buyerAddressFunc,
 			sellerNameFunc:   sellerNameFunc,
-			orderExpected:    order,
-			errExpected:      errAny,
+			orderExpected:    Order{},
+			errExpected:      errNotFound,
+			ctxErrExpected:   nil,
 		},
 		{
 			name:             "slow buyer name",
 			buyerNameFunc:    slowBuyerNameFunc,
 			buyerAddressFunc: buyerAddressFunc,
 			sellerNameFunc:   sellerNameFunc,
-			orderExpected:    order,
+			orderExpected:    Order{},
 			errExpected:      context.DeadlineExceeded,
+			ctxErrExpected:   context.DeadlineExceeded,
 		},
 		{
 			name:             "slow buyer name and error",
 			buyerNameFunc:    slowBuyerNameFunc,
 			buyerAddressFunc: errFunc,
 			sellerNameFunc:   sellerNameFunc,
-			orderExpected:    order,
-			errExpected:      errAny,
-			checkCtxErrorNil: true,
+			orderExpected:    Order{},
+			errExpected:      errNotFound,
+			ctxErrExpected:   nil,
 		},
 		{
 			name: "total functions execution time greater than test timeout",
@@ -99,7 +95,7 @@ func TestGetOrder(t *testing.T) {
 				select {
 				case <-ctx.Done():
 					return "", ctx.Err()
-				case <-time.After(funcExecutionTime):
+				case <-time.After(testTimeout / 2):
 					return buyerName, nil
 				}
 			},
@@ -107,7 +103,7 @@ func TestGetOrder(t *testing.T) {
 				select {
 				case <-ctx.Done():
 					return "", ctx.Err()
-				case <-time.After(funcExecutionTime):
+				case <-time.After(testTimeout / 2):
 					return buyerAddress, nil
 				}
 			},
@@ -115,11 +111,11 @@ func TestGetOrder(t *testing.T) {
 				select {
 				case <-ctx.Done():
 					return "", ctx.Err()
-				case <-time.After(funcExecutionTime):
+				case <-time.After(testTimeout / 2):
 					return sellerName, nil
 				}
 			},
-			orderExpected: order,
+			orderExpected: filledOrder,
 		},
 	}
 
@@ -129,14 +125,10 @@ func TestGetOrder(t *testing.T) {
 			defer cancel()
 
 			order, err := GetOrder(ctx, tt.buyerNameFunc, tt.buyerAddressFunc, tt.sellerNameFunc)
+			require.ErrorIs(t, err, tt.errExpected)
+			assert.Equal(t, tt.orderExpected, order)
 
-			if tt.errExpected == nil {
-				assert.Equal(t, tt.orderExpected, order)
-			}
-			if tt.checkCtxErrorNil {
-				assert.Nil(t, ctx.Err())
-			}
-			assert.ErrorIs(t, tt.errExpected, err)
+			assert.ErrorIs(t, ctx.Err(), tt.ctxErrExpected)
 		})
 	}
 }
