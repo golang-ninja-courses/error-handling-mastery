@@ -51,6 +51,7 @@ func Aggregate(ctx context.Context, batchSize int, in <-chan Transaction) (<-cha
 // Ошибку от CalculateHash нужно писать в outbound-канал и завершать выполнение.
 func HashTxs(ctx context.Context, in <-chan []Transaction) (<-chan Block, <-chan error, error) {
 	// Реализовать.
+	// Используйте CalculateHash для подсчета хеша батча транзакций.
 	return nil, nil, nil
 }
 
