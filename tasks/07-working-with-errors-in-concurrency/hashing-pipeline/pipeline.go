@@ -38,7 +38,7 @@ type Block struct {
 //  - при получении хотя бы одной ошибки из финального канала ошибок (в таком случае пайплайн требует от функций
 //    досрочного завершения и ожидает их);
 //  - при безошибочной обработке всех транзакций.
-func Pipeline(ctx context.Context, txs ...Transaction) error {
+func Pipeline(ctx context.Context, batchSize int, out io.Writer, txs ...Transaction) error {
 	// Реализуй меня.
 	return nil
 }
