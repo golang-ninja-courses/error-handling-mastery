@@ -21,7 +21,7 @@ type Transaction struct {
 }
 
 func (t Transaction) Hash() Hash {
-	return newHash([]byte(strconv.FormatInt(t.ID, 10))[:])
+	return newHash([]byte(strconv.FormatInt(t.ID, 10)))
 }
 
 type Block struct {
