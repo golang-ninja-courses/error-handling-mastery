@@ -5,9 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"go.uber.org/goleak"
-
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 )
 
 func TestMain(m *testing.M) {
@@ -273,7 +272,7 @@ func TestHashTxs_CancelledContext(t *testing.T) {
 }
 
 func TestSink(t *testing.T) {
-	blocks := []Block{{hash([]byte("1"))}, {hash([]byte("2"))}, {hash([]byte("3"))}}
+	blocks := []Block{{newHash([]byte("1"))}, {newHash([]byte("2"))}, {newHash([]byte("3"))}}
 	in := make(chan Block)
 	go func() {
 		defer close(in)
