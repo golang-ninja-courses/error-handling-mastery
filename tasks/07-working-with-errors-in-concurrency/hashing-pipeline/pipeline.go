@@ -56,15 +56,15 @@ func batch(ctx context.Context, batchSize int, txs ...Transaction) (<-chan []Tra
 // hashTransactions берёт группы транзакций из входного канала, и считает хеш от группы с помощью CalculateHash:
 //  - возвращает ошибку errNilChannel, если на вход получила nil-канал;
 //  - если при просчёте хеша возникает ошибка, то функция пишет её в выходной канал и завершает своё выполнение.
-func hashTransactions(ctx context.Context, in <-chan []Transaction) (<-chan Block, <-chan error, error) {
+func hashTransactions(ctx context.Context, batchc <-chan []Transaction) (<-chan Block, <-chan error, error) {
 	// Реализуй меня.
 	return nil, nil, nil
 }
 
-// sink выводит в out хеши блоков из входного канала, разделяя их через '\n':
+// sink выводит в out хеши блоков из входного канала в строковой форме, разделяя их через '\n':
 //  - возвращает ошибку errNilChannel, если на вход получила nil-канал;
 //  - если при записи в out возникает ошибка, то функция пишет её в выходной канал и завершает своё выполнение.
-func sink(_ context.Context, in <-chan Block, out io.Writer) (<-chan error, error) {
+func sink(ctx context.Context, blockc <-chan Block, out io.Writer) (<-chan error, error) {
 	// Реализуй меня.
 	return nil, nil
 }
@@ -74,5 +74,6 @@ func sink(_ context.Context, in <-chan Block, out io.Writer) (<-chan error, erro
 //  - возвращает ошибку errNilChannel, если хотя бы один из каналов в слайсе нулевой;
 //  - выходной канал закрывается только после того, как будут вычитаны все входные каналы.
 func mergeErrors(errcs ...<-chan error) (<-chan error, error) {
+	// Реализуй меня.
 	return nil, nil
 }

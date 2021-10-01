@@ -2,10 +2,10 @@ package pipeline
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCalculateHash(t *testing.T) {
@@ -68,11 +68,11 @@ func TestCalculateHash(t *testing.T) {
 		},
 	}
 
-	const n = 10_000_000
+	const n = 1_000_000
 	cases = append(cases, tCase{
 		name:         fmt.Sprintf("different %d elements", n),
 		input:        makeHashableFromTransactions(n),
-		hashExpected: "d5844190df77ecd8d6c512f040ecab1b725bb28867a8d87b44af1ce7735b6a7d",
+		hashExpected: "6bada1daab487bacf2674fe1879de2448c1770e8de4da1a324f3f77bb4d011f3",
 	})
 
 	for _, tt := range cases {
@@ -90,14 +90,14 @@ func TestCalculateHash_DoNotAffectInput(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		h, err := CalculateHash(in)
 		require.NoError(t, err)
-		assert.Equal(t, "3f9ff7574a96d08662a7b9826a320f490e7a13e6d8a5639f2203d613cf082298", h.String())
+		assert.Equal(t, "9671b827bfe828b3c781ad368795f6588268e018bcf3829482f4ed37a1af93c9", h.String())
 	}
 }
 
 func makeHashableFromTransactions(n int) []Hashable {
 	txs := make([]Hashable, n)
-	for i := 0; i < n; i++ {
-		txs[i] = Transaction{ID: int64(i)}
+	for i := 1; i <= n; i++ {
+		txs[i-1] = Transaction{ID: int64(i)}
 	}
 	return txs
 }

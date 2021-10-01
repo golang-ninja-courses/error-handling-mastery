@@ -1,11 +1,16 @@
 package pipeline
 
 import (
+	"bytes"
 	"context"
-	"errors"
+	"io"
+	"os"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/goleak"
 )
 
@@ -13,324 +18,132 @@ func TestMain(m *testing.M) {
 	goleak.VerifyTestMain(m)
 }
 
-func TestSource(t *testing.T) {
-	cases := []struct {
-		name         string
-		input        []Transaction
-		output       []Transaction
-		errcExpected error
-		errExpected  error
-	}{
-		{
-			name:   "ok",
-			input:  []Transaction{{1}, {2}, {3}},
-			output: []Transaction{{1}, {2}, {3}},
-		},
-		{
-			name:        "empty input",
-			input:       []Transaction{},
-			errExpected: errEmptyInput,
-		},
-		{
-			name:         "invalid input",
-			input:        []Transaction{{1}, {}, {3}},
-			output:       []Transaction{{1}},
-			errcExpected: errEmptyTx,
-		},
-	}
-
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			out, errc, err := Source(context.Background(), tt.input...)
-
-			if tt.errExpected != nil {
-				assert.ErrorIs(t, err, tt.errExpected)
-				return
-			}
-
-			txs := make([]Transaction, 0, len(tt.input))
-			for tx := range out {
-				txs = append(txs, tx)
-			}
-			assert.Equal(t, tt.output, txs)
-
-			assert.ErrorIs(t, tt.errcExpected, <-errc)
-		})
-	}
-}
-
-func TestSource_CancelledContext(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	cancel()
-
-	out, errc, err := Source(ctx, []Transaction{{1}, {2}, {3}}...)
-
-	assert.NoError(t, err)
-
-	var txs []Transaction
-	for tx := range out {
-		txs = append(txs, tx)
-	}
-
-	switch len(txs) {
-	case 0:
-	case 1:
-		assert.Equal(t, int64(1), txs[0].ID)
-	default:
-		t.Error("out should be empty or contain single value")
-	}
-
-	assert.Empty(t, <-errc)
-}
-
-func TestAggregate(t *testing.T) {
-	batchSize := 2
-	in := make(chan Transaction)
-	expected := [][]Transaction{{{1}, {2}}, {{3}, {4}}, {{5}}}
-
-	go func() {
-		defer close(in)
-		for _, tx := range []Transaction{{1}, {2}, {3}, {4}, {5}} {
-			in <- tx
-		}
-	}()
-
-	out, errc, err := Aggregate(context.Background(), batchSize, in)
-	assert.NoError(t, err)
-
-	i := 0
-	for tx := range out {
-		assert.Equal(t, expected[i], tx)
-		i++
-	}
-
-	assert.NoError(t, <-errc)
-}
-
-func TestAggregate_InvalidBatchSize(t *testing.T) {
-	for _, batchSize := range []int{0, maxBatchSize + 1} {
-		out, errc, err := Aggregate(context.Background(), batchSize, nil)
-		assert.Nil(t, out)
-		assert.Nil(t, errc)
-		assert.ErrorIs(t, err, errInvalidBatchSize)
-	}
-}
-
-func TestAggregate_CancelledContext(t *testing.T) {
-	testCtx, testCtxCancel := context.WithCancel(context.Background())
-	defer testCtxCancel()
-
-	ctx, cancel := context.WithCancel(testCtx)
-	cancel()
-
-	inFunc := func(len int) <-chan Transaction {
-		in := make(chan Transaction)
-		go func() {
-			defer close(in)
-			for i := 1; i <= len; i++ {
-				select {
-				case in <- Transaction{int64(i)}:
-				case <-testCtx.Done():
-				}
-			}
-		}()
-		return in
-	}
-
-	cases := []struct {
-		name      string
-		batchSize int
-		inLen     int
-	}{
-		{
-			name:      `batch size greater than "in" length`,
-			batchSize: 3,
-			inLen:     1,
-		},
-		{
-			name:      `batch size equals than "in" length`,
-			batchSize: 1,
-			inLen:     1,
-		},
-		{
-			name:      `batch size less than "in" length`,
-			batchSize: 1,
-			inLen:     3,
-		},
-	}
-
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			out, errc, err := Aggregate(ctx, tt.batchSize, inFunc(tt.inLen))
-			assert.NoError(t, err)
-
-			var txs [][]Transaction
-			for tx := range out {
-				txs = append(txs, tx)
-			}
-
-			switch len(txs) {
-			case 0:
-			case 1:
-				assert.Equal(t, []Transaction{{1}}, txs[0])
-			default:
-				t.Error("out should be empty or contain single value")
-			}
-
-			assert.Empty(t, <-errc)
-		})
-	}
-}
-
-func TestHashTxs(t *testing.T) {
-	in := make(chan []Transaction)
-	expectedHashes := []string{
-		"f981662b1dcd91b2569a56fce8c590b04bc062ee22d459e49bc507638c8099a2",
-		"aabd9871539c37bda9f77bf47440df5a57c2a5736a04387d1c3b92dffefa47e4",
-		"2183a742b2c40c0f90befe5b460fe0200646897c803b14513d754ab5929b1a2b",
-	}
-
-	go func() {
-		defer close(in)
-		for _, s := range [][]Transaction{{{1}, {2}, {3}}, {{4}, {5}}, {{6}}} {
-			in <- s
-		}
-	}()
-
-	out, errc, err := HashTxs(context.Background(), in)
-	assert.NoError(t, err)
-
-	i := 0
-	for block := range out {
-		assert.Equal(t, expectedHashes[i], block.Hash.String())
-		i++
-	}
-
-	assert.NoError(t, <-errc)
-}
-
-func TestHashTxs_CalculateHashError(t *testing.T) {
+func ExamplePipeline() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	in := make(chan []Transaction)
-
-	go func() {
-		defer close(in)
-		for _, s := range [][]Transaction{nil, nil, nil} {
-			select {
-			case in <- s:
-			case <-ctx.Done():
-				return
-			}
-		}
-	}()
-
-	_, errc, err := HashTxs(ctx, in)
-	assert.NoError(t, err)
-
-	assert.Error(t, <-errc)
-}
-
-func TestHashTxs_CancelledContext(t *testing.T) {
-	testCtx, testCtxCancel := context.WithCancel(context.Background())
-	defer testCtxCancel()
-
-	ctx, cancel := context.WithCancel(testCtx)
-	cancel()
-
-	in := make(chan []Transaction)
-
-	go func() {
-		defer close(in)
-		for _, txs := range [][]Transaction{{{1}}, {{2}}} {
-			select {
-			case in <- txs:
-			case <-testCtx.Done():
-			}
-		}
-	}()
-
-	out, errc, err := HashTxs(ctx, in)
-
-	assert.NoError(t, err)
-
-	var blocks []Block
-	for block := range out {
-		blocks = append(blocks, block)
+	err := Pipeline(ctx, 2, os.Stdout,
+		Transaction{ID: 100},
+		Transaction{ID: 200},
+		Transaction{ID: 300})
+	if err != nil {
+		panic(err)
 	}
 
-	switch len(blocks) {
-	case 0:
-	case 1:
-		assert.Equal(t, "488ad59efeafae6af0be932803b65470b908c33377f4ff99aad1fd8c68c4f463", blocks[0].Hash.String())
-	default:
-		t.Error("out should be empty or contain single value")
-	}
-
-	assert.Empty(t, <-errc)
-}
-
-func TestSink(t *testing.T) {
-	blocks := []Block{{newHash([]byte("1"))}, {newHash([]byte("2"))}, {newHash([]byte("3"))}}
-	in := make(chan Block)
-	go func() {
-		defer close(in)
-		for _, block := range blocks {
-			in <- block
-		}
-	}()
-
-	errc, err := Sink(context.Background(), in)
-	assert.NoError(t, err)
-	assert.NoError(t, <-errc)
-}
-
-func TestMerge(t *testing.T) {
-	errs := []error{errors.New("1"), errors.New("2"), errors.New("3")}
-	errcs := make([]<-chan error, 0, 3)
-
-	for _, err := range errs {
-		errc := make(chan error, 1)
-		errc <- err
-		close(errc)
-
-		errcs = append(errcs, errc)
-	}
-
-	out := Merge(errcs...)
-
-	for err := range out {
-		assert.Contains(t, errs, err)
-	}
+	// Output:
+	// a6c9627e9b7a9724c62a4be4745a3ad01b99e219f17e18f90793983f1e567590
+	// 54f46fa1dcd09720d9f4979bd6a4cd1363a9e6118a38580bbbff008e9b59449a
 }
 
 func TestPipeline(t *testing.T) {
 	cases := []struct {
-		name        string
-		txs         []Transaction
-		expectError bool
+		name                string
+		batchSize           int
+		txs                 []Transaction
+		expectedErr         error
+		expectedHashes      string
+		expectedHashesCount int
 	}{
 		{
-			name: "ok",
-			txs:  []Transaction{{1}, {2}, {3}, {4}, {5}},
+			name:        "immediately error from batch",
+			batchSize:   0,
+			txs:         makeTransactions(3),
+			expectedErr: errInvalidBatchSize,
 		},
 		{
-			name:        "tx with zero ID",
-			txs:         []Transaction{{1}, {2}, {0}, {4}, {5}},
-			expectError: true,
+			name:        "error from batch",
+			batchSize:   4,
+			txs:         []Transaction{{ID: 1}, {ID: 2}, {ID: 3}, {ID: 0}},
+			expectedErr: errEmptyTx,
+		},
+		{
+			name:      "positive scenario",
+			batchSize: 4,
+			txs:       makeTransactions(100),
+			expectedHashes: `8b186d4723474e69fd14c28384063e2031d5da66b97844d5973a9e9bf7dcfeeb
+07f3af090be94597a0903e91a313b7e461ffbec868eebf9cc88ae75c539ed2eb
+42b9b918692a1e74ba4d40386fc76ab6ceb2fa73b53598d29d1089ccdae0c750
+c607a9c06c2bfb6e974628c30bd17bed2fe23c613e97c36430cfbf607acb03f7
+24e0e160c195b44319e0d84f18124fa7800de7b6681df452d280ae92cc0d6c86
+a3f805a47570ea508908e0ab2b1cf8f5218f2ee61a71e16c2bb03553c0cb42ae
+a3cce01bacb91aaa72e8682577b12d6e4dab43a6ff8bfe0bcf43f52054ee11c3
+874a358653269a55affcca5fa55c75c695de3172c110a4d49bdf036090346674
+b418dbba7fe6563ee40ef8c1a834395357a0e741bf3e14bd8e68bb4af6d3a50f
+3a8a862e6e349b5e215d7a0a02bacf2398f620eef93c0ec748f14b967b9eabc6
+ae02d51274acc771addd0c0db567434a1c9433a996f2536add4ba0dbcda0ee73
+97313cf74036b725429ef69ce2bbea204dd4474b12d0cdb681392d4c5f926db3
+c470769604483aa52d0a291c3647f3964773411652197be1921d62a4a12dc90a
+dc4a415b82eaaa41ad4eb5676ef0416428e7178e6423a753071d43610183ec51
+d8bc56364c602e42c0db0de38250d397a0104f15adefd66bdfb3de165126c735
+3e17151589260b90fbe0fb652dc1b1e5a21f32d3120f316eb1111e705c7248c6
+984d8612105bb1ce8ff8f967d660a49493db8ee62f2e894d7360c993b40d730e
+033c75caae1148d459c637e2c98cb8344e783d3ae91e18ba14b3a5bbc7a99341
+5b3298ab289ac42bd0c641e83b21f799976d9f1ff42fb259fa9db8e8946add1f
+5065bc02e095be9e88166bbe3bc2d4f191d332d2884f823ddbf77da5d65afa25
+f73280794c2fd11d11021ccf7b8584a58d137fc086c93c36fb5b9af5d9a3cdf7
+8b906c632e5b3c7772aad478cbe51315938f076c73a4891ec5149ba1ba52f416
+2ab95e7abd88dcb2662a7206e055a3ee49b9a91ddfd60c2333c1c5735a9f2e4e
+cb6095d7b5963e6efcd02d5223a5f0856c3a956a675ef9a62843cb260d3e0a6a
+2d476ba57977ecc287d8d56af25360d336ac677f3a388be178f102aa6555dd12`,
+		},
+		{
+			name:                "big data processing",
+			batchSize:           2,
+			txs:                 makeTransactions(1_000_000),
+			expectedHashesCount: 1_000_000 / 2,
 		},
 	}
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			err := Pipeline(context.Background(), tt.txs...)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
 
-			if tt.expectError {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
+			buf := bytes.NewBuffer(nil)
+			err := Pipeline(ctx, tt.batchSize, buf, tt.txs...)
+			require.ErrorIs(t, err, tt.expectedErr)
+
+			if tt.expectedHashes != "" {
+				assert.Equal(t, tt.expectedHashes, strings.TrimSpace(buf.String()))
+			}
+
+			if tt.expectedHashesCount != 0 {
+				received := strings.Split(strings.TrimSpace(buf.String()), "\n")
+				assert.Len(t, received, tt.expectedHashesCount)
 			}
 		})
 	}
+}
+
+func TestPipeline_Cancelling(t *testing.T) {
+	writerLatency := time.Second / 3
+	timeout := time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	w := slowWriter{
+		w:       bytes.NewBuffer(nil),
+		latency: writerLatency,
+	}
+	err := Pipeline(ctx, 4, w, makeTransactions(10_000_000)...)
+	require.NoError(t, err)
+}
+
+type slowWriter struct {
+	w       io.Writer
+	latency time.Duration
+}
+
+func (w slowWriter) Write(d []byte) (int, error) {
+	time.Sleep(w.latency)
+	return w.w.Write(d)
+}
+
+func makeTransactions(n int) []Transaction {
+	txs := make([]Transaction, n)
+	for i := 1; i <= n; i++ {
+		txs[i-1] = Transaction{ID: int64(i)}
+	}
+	return txs
 }
