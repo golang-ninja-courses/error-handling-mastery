@@ -1,0 +1,45 @@
+# https://taskfile.dev/#/installation
+version: '3'
+
+silent: true
+
+tasks:
+  default:
+    cmds:
+      - task: tools:install
+      - task: tidy
+      - task: fmt
+      - task: lint
+
+  tools:install:
+    - echo "Install local tools..."
+    - (which gci > /dev/null) || GO111MODULE=off go get -u github.com/daixiang0/gci
+    - (which gofumpt > /dev/null) || GO111MODULE=off go get -u mvdan.cc/gofumpt
+
+  tidy:
+    cmds:
+      - echo "Tidy..."
+      - go mod tidy
+
+  fmt:
+    cmds:
+      - echo "Fmt..."
+      - gofumpt -w .
+      - gci -w -local github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go . > /dev/null
+
+  lint:
+    cmds:
+      - task: lint:examples
+      - task: lint:tasks
+
+  lint:examples:
+    - echo "Lint examples..."
+    - golangci-lint run --build-tags pkg,pkg.msg.stack --fix ./examples/...
+
+  lint:tasks:
+    - echo "Lint tasks..."
+    - golangci-lint run --fix ./tasks/...
+
+  lint:dir:
+    - echo "Lint..."
+    - golangci-lint run --fix {{.CLI_ARGS}}

@@ -1,0 +1,121 @@
+# На момент завершения работы над курсом версия линтера:
+# golangci-lint has version 1.42.1 built from 54f4301d on 2021-09-06T17:05:10Z
+
+run:
+  skip-dirs-use-default: false
+  tests: true
+
+issues:
+  max-same-issues: 0
+
+  exclude:
+    - G107 # Potential HTTP request made with variable url
+    - G404 # Weak random number generator
+    - SA9003 # Empty branch
+
+  exclude-rules:
+    - source: .*github\.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go # Imports
+      linters:
+        - lll
+
+    - source: //go:generate
+      linters:
+        - lll
+
+    - path: examples/03-go-errors-concept/errorf-\d/main\.go
+      linters:
+        - govet
+
+    - path: examples/04-non-standard-modules/pkg-wrap-vs-fmt-3
+      linters:
+        - govet
+
+    - path: examples/05-errors-best-practices/ruleguard-wrap
+      linters:
+        - deadcode
+        - unused
+
+    - path: examples/08-future-of-errors-in-go2
+      linters:
+        - deadcode
+        - unused
+
+    - path: tasks
+      linters:
+        - typecheck
+
+    - path: _test\.go
+      linters:
+        - dupl
+        - funlen
+        - lll
+
+linters-settings:
+  gci:
+    local-prefixes: github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go
+
+  lll:
+    line-length: 130
+
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        json: snake
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errname
+    - exportloopref
+    - funlen
+    - gci
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ifshort
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - tagliatelle
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unused
+    - varcheck
+    - wastedassign
+    - whitespace
