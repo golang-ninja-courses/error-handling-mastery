@@ -6,6 +6,7 @@ BIN = ./main.out
 
 build:
 	@docker run \
+		--rm \
 		--platform linux/amd64 \
 		--workdir $(HOME) \
 		-v $(PWD):$(HOME) \
@@ -14,6 +15,7 @@ build:
 
 run: build
 	@docker run \
+		  --rm \
 		  -i \
 		  --platform linux/amd64 \
 		  --workdir $(HOME) \
@@ -21,8 +23,11 @@ run: build
 		  mooreryan/valgrind --tool=memcheck --leak-check=full $(BIN)
 
 check: build
+	@docker rm -f valgrind >/dev/null 2>&1 || true
 	@for input in ./testdata/*.txt ; do \
 		docker run \
+		  --rm \
+		  --name valgrind \
 		  -i \
 		  --platform linux/amd64 \
 		  --workdir $(HOME) \
