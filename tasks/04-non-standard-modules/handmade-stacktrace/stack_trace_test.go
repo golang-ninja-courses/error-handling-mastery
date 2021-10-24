@@ -14,7 +14,7 @@ func ExampleTrace() {
 
 	// Output:
 	// handmade-stacktrace.ExampleTrace
-	// handmade-stacktrace/stack_trace_test.go:13
+	// handmade-stacktrace/stack_trace_test.go:12
 }
 
 func TestTrace(t *testing.T) {
@@ -23,7 +23,7 @@ func TestTrace(t *testing.T) {
 		assert.Len(t, frames, 3)
 
 		re := regexp.MustCompile(`handmade-stacktrace\.TestTrace\.func1
-handmade-stacktrace\/stack_trace_test\.go:23
+handmade-stacktrace\/stack_trace_test\.go:22
 testing\.tRunner
 testing\/testing\.go:\d{1,4}`)
 		trace := frames[:2].String()
