@@ -11,7 +11,7 @@ import (
 func TestWrapf(t *testing.T) {
 	t.Run("positive", func(t *testing.T) {
 		err := Wrapf(io.EOF, "user %d: cannot read file %q", 42, "/etc/hosts")
-		require.NoError(t, err)
+		require.Error(t, err)
 		assert.EqualError(t, err, `user 42: cannot read file "/etc/hosts": EOF`)
 		assert.ErrorIs(t, err, io.EOF)
 	})
