@@ -12,4 +12,4 @@ func (p *PipelineError) Error() string {
 	return fmt.Sprintf("pipeline %q error", p.Name)
 }
 
-// Добавь методов для структуры PipelineErr.
+// Добавь методов для структуры PipelineError.
