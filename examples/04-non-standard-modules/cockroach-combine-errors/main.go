@@ -11,7 +11,7 @@ import (
 
 const google = "https://www.google.com"
 
-func GetPage(ctx context.Context, url string) ([]byte, error) {
+func GetPage(ctx context.Context, url string) (data []byte, err error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.WithMessage(err, "create req")
@@ -24,10 +24,12 @@ func GetPage(ctx context.Context, url string) ([]byte, error) {
 	defer func() {
 		// Дополняем основную ошибку второстепенной, если она возникнет.
 		// При этом, если есть только второстепенная ошибка, то она и будет возвращена.
+		//
+		// ВАЖНО: использование именованного возвращаемого значения.
 		err = errors.CombineErrors(err, response.Body.Close())
 	}()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, errors.WithMessage(err, "read body")
 	}
