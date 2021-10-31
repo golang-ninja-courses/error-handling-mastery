@@ -1,6 +1,7 @@
 package trace
 
 import (
+	stderrors "errors"
 	"fmt"
 	"path/filepath"
 	"strconv"
@@ -17,20 +18,20 @@ import (
 func ExampleGetDeepestStackTrace() {
 	st := GetDeepestStackTrace(one())
 
-	// Будет выведен стектрейс самой глубокой ошибки.
+	// Будет выведен самый глубокий стектрейс (необязательно самой глубокой ошибки).
 	fmt.Printf("%s\n", formatStackTrace(st))
 
 	// Output:
 	// deepest-stacktrace.four
-	//     trace_test.go:79
+	//     trace_test.go:80
 	// deepest-stacktrace.three
-	//     trace_test.go:75
+	//     trace_test.go:76
 	// deepest-stacktrace.two
-	//     trace_test.go:71
+	//     trace_test.go:72
 	// deepest-stacktrace.one
-	//     trace_test.go:67
+	//     trace_test.go:68
 	// deepest-stacktrace.ExampleGetDeepestStackTrace
-	//     trace_test.go:18
+	//     trace_test.go:19
 	// main.main
 	//     .:45
 }
@@ -76,5 +77,9 @@ func three() error {
 }
 
 func four() error {
-	return errors.New("four")
+	return errors.Wrap(extServiceCall(), "four")
+}
+
+func extServiceCall() error {
+	return stderrors.New("connection refused")
 }
