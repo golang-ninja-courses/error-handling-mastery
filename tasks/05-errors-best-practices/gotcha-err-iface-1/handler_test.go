@@ -16,7 +16,7 @@ func ExampleHandler() {
 	}
 
 	// Output:
-	// no handler error
+	// no handle err
 }
 
 func TestHandle(t *testing.T) {
