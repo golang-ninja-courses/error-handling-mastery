@@ -3,6 +3,7 @@ package collector
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -27,8 +28,9 @@ type Sector interface {
 // При возникновении ошибки во время опроса очередного сектора, функция завершает
 // свою работу и возвращает эту ошибку.
 func Collect(ctx context.Context, sectors []Sector) ([]SensorValue, error) {
-	// Для сохранения импортов. Удали эту строку.
+	// Для сохранения импортов. Удали эти строки.
 	_ = errgroup.Group{}
+	_ = fmt.Errorf
 
 	// Реализуй меня.
 	return nil, nil
