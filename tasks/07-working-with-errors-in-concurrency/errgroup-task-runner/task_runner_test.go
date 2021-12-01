@@ -8,13 +8,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/goleak"
 )
 
-const (
-	defaultRunTimeout  = 5 * time.Second
-	defaultTestTimeout = 5 * time.Second
-)
+const defaultRunTimeout = 5 * time.Second
 
 func TestRun(t *testing.T) {
 	var c counter
@@ -130,23 +128,19 @@ func TestRun(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
 
-			errc := make(chan error)
-
+			errc := make(chan error, 1)
 			go func() {
-				select {
-				case <-ctx.Done():
-				case errc <- Run(ctx, tt.workers, queue(ctx, tt.tasks...)):
-				}
+				errc <- Run(ctx, tt.workers, queue(ctx, tt.tasks...))
 			}()
 
 			start := time.Now()
 
 			select {
-			case <-time.After(defaultTestTimeout):
+			case <-time.After(defaultRunTimeout):
 				t.Fatal("tested code is too slow: Run blocked?")
 
 			case err := <-errc:
-				assert.ErrorIs(t, err, tt.expectedErr)
+				require.ErrorIs(t, err, tt.expectedErr)
 
 				if tt.expectedExecTime != 0 {
 					assert.LessOrEqual(t, time.Since(start), tt.expectedExecTime,
