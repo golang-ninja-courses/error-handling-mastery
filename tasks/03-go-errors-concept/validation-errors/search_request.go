@@ -1,5 +1,13 @@
 package requests
 
+import (
+	// Доступные пакеты, _ для сохранения импортов.
+	_ "errors"
+	_ "fmt"
+	_ "regexp"
+	_ "strings"
+)
+
 const maxPageSize = 100
 
 // Реализуй нас.
