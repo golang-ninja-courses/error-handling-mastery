@@ -41,7 +41,10 @@ func (w *saveMsgError) Error() string {
 
 func saveMsg(m Message) error {
 	if true {
-		return &saveMsgError{id: m.ID, err: io.ErrShortWrite}
+		return &saveMsgError{
+			id:  m.ID,
+			err: fmt.Errorf("%w", io.ErrShortWrite),
+		}
 	}
 	return nil
 }
