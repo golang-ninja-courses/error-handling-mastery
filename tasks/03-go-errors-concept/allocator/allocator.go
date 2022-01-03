@@ -1,4 +1,4 @@
-package memory
+package allocator
 
 const (
 	Admin          = 777
