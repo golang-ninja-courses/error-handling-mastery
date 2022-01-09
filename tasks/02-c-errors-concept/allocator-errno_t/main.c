@@ -8,12 +8,12 @@ int main()
     size_t size = 0;
     int uid = 0;
 
-    if (scanf("%d %zd", &uid, &size) == 0) {
+    errno = 0;
+    if (scanf("%d %zu", &uid, &size) != 2) {
         perror("scanf failed");
         exit(1);
     }
 
-    errno = 0;
     void *p = NULL;
     errno_t err = allocate(uid, size, &p);
     if (err != 0) {

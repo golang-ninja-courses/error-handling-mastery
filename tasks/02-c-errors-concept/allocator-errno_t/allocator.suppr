@@ -1,0 +1,17 @@
+{
+   <fishy_size_for_malloc>
+   Memcheck:FishyValue
+   malloc(size)
+   fun:malloc
+   fun:allocate
+   fun:main
+}
+
+{
+   <fishy_size_for_calloc>
+   Memcheck:FishyValue
+   calloc(nmemb)
+   fun:calloc
+   fun:allocate
+   fun:main
+}
