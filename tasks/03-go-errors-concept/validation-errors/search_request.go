@@ -1,6 +1,7 @@
 package requests
 
 import (
+
 	// Доступные пакеты, _ для сохранения импортов.
 	_ "errors"
 	_ "fmt"

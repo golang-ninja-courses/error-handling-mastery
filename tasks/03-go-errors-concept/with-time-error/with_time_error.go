@@ -7,7 +7,7 @@ import (
 type WithTimeError struct { // Реализуй меня.
 }
 
-var NewWithTimeError = func(err error) error {
+func NewWithTimeError(err error) error {
 	return newWithTimeError(err, time.Now)
 }
 
