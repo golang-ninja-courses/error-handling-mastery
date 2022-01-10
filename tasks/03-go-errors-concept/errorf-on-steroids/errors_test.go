@@ -56,6 +56,16 @@ func TestErrorf(t *testing.T) {
 		require.ErrorIs(t, err, syscall.EACCES)
 	})
 
+	t.Run("errors.Is is not working for not-w errors", func(t *testing.T) {
+		err := Errorf("cannot sync files: %v (or %s) through %w", io.ErrClosedPipe, io.ErrUnexpectedEOF, syscall.EACCES)
+		require.Error(t, err)
+		require.EqualError(t, err,
+			`cannot sync files: io: read/write on closed pipe (or unexpected EOF) through permission denied`)
+		require.NotErrorIs(t, err, io.ErrClosedPipe)
+		require.NotErrorIs(t, err, io.ErrUnexpectedEOF)
+		require.ErrorIs(t, err, syscall.EACCES)
+	})
+
 	t.Run("errors.As is working", func(t *testing.T) {
 		err := Errorf("cannot load file %q: %w through %w", "file.txt",
 			&net.AddrError{Addr: "0.0.0.0:4242"},
@@ -63,6 +73,34 @@ func TestErrorf(t *testing.T) {
 
 		require.Error(t, err)
 		require.ErrorIs(t, err, syscall.ECONNREFUSED)
+
+		var addrErr *net.AddrError
+		require.ErrorAs(t, err, &addrErr)
+		require.Equal(t, "0.0.0.0:4242", addrErr.Addr)
+	})
+
+	t.Run("errors.As is not working for not-w errors", func(t *testing.T) {
+		err := Errorf("cannot load file: %v (or %s) through %w",
+			&net.AddrError{Addr: "0.0.0.0:4242", Err: "err"},
+			&net.DNSError{Name: "0.0.0.0", Err: "no such host"},
+			syscall.ECONNREFUSED)
+
+		require.Error(t, err)
+		require.EqualError(t, err,
+			`cannot load file: address 0.0.0.0:4242: err (or lookup 0.0.0.0: no such host) through connection refused`)
+		require.ErrorIs(t, err, syscall.ECONNREFUSED)
+
+		var addrErr *net.AddrError
+		require.False(t, errors.As(err, &addrErr))
+
+		var dnsErr *net.DNSError
+		require.False(t, errors.As(err, &dnsErr))
+	})
+
+	t.Run("errors.As returns the first suitable err", func(t *testing.T) {
+		err := Errorf("cannot load file %q: %w through %w", "file.txt",
+			&net.AddrError{Addr: "0.0.0.0:4242"},
+			&net.AddrError{Addr: "0.0.0.0:4243"})
 
 		var addrErr *net.AddrError
 		require.ErrorAs(t, err, &addrErr)
