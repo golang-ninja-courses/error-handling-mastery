@@ -9,19 +9,42 @@ import (
 )
 
 var (
-	a error = pkga.EOF{}
-	b error = pkgb.EOF{}
-	c error = new(pkgb.EOF)
-	d error = new(pkgb.EOF)
+	aVal  error = pkga.EOF{}
+	aPtr  error = new(pkga.EOF)
+	aPtr2 error = new(pkga.EOF)
+
+	bVal error = pkgb.EOF{}
+	bPtr error = new(pkgb.EOF)
 )
 
 func main() {
-	fmt.Println(a == b)          // false
-	fmt.Println(c == d)          // true
-	fmt.Println(errors.Is(a, c)) // false
-	fmt.Println(errors.Is(c, d)) // true
+	fmt.Println("\nValues errors from diff packages:")
+	fmt.Printf("%p %p\n", &aVal, &bVal) // 0x102a08f70 0x102a08f70 - разные адреса, разные пакеты.
+	fmt.Println(aVal == bVal)           // Очевидно - false
+	fmt.Println(errors.Is(aVal, bVal))  // false
 
-	// 0x10303ec80 0x10303ec90
-	// 0x1030733b8 0x1030733b8 <- Одинаковые!
-	fmt.Printf("%p %p \n%p %p\n", &a, &b, c, d)
+	fmt.Println("\nPointers errors from diff packages:")
+	fmt.Printf("%p %p\n", aPtr, bPtr) // 0x102a3edb0 0x102a3edb0 - одинаковые адреса при разных пакетах!
+	// Неочевидно - тоже false, несмотря на один и тот же адрес:
+	fmt.Println(aPtr == bPtr)
+	fmt.Println(errors.Is(aPtr, bPtr)) // false
+	// Обратимся к спецификации:
+	//   Interface values are comparable. Two interface values are equal if they have identical dynamic types
+	//   and equal dynamic values or if both have value nil.
+	//
+	// Несмотря на равенство указателей (dynamic values), типы этих указателей (dynamic types) различны,
+	// соответственно две ошибки (два интерфейса error) тоже различны:
+	fmt.Printf("%T(%p) %T(%p)\n", aPtr, aPtr, bPtr, bPtr) // *pkga.EOF(0x102a3edb0) *pkgb.EOF(0x102a3edb0)
+
+	fmt.Println("\nCompare values & pointers:")
+	// Сравнение указателя и неуказателя - очевидно false:
+	fmt.Println(aPtr == aVal)          // false
+	fmt.Println(errors.Is(aPtr, aVal)) // false
+	fmt.Println(aPtr == bVal)          // false
+	fmt.Println(errors.Is(aPtr, bVal)) // false
+
+	fmt.Println("\nCompare errors from one package:")
+	// Получаем возможное равенство всё-таки только в пределах одного пакета:
+	fmt.Println(aPtr == aPtr2)      // Возможно true
+	fmt.Println(aVal == pkga.EOF{}) // true
 }
