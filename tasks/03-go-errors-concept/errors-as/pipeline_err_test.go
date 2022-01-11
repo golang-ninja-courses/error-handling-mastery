@@ -2,13 +2,14 @@ package pipe
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestPipelineError_As(t *testing.T) {
-	for _, tt := range []struct {
+	for i, tt := range []struct {
 		pipelineErr     *PipelineError
 		expectedUserErr *UserError
 	}{
@@ -21,13 +22,15 @@ func TestPipelineError_As(t *testing.T) {
 			expectedUserErr: &UserError{User: "Alex", Operation: "file downloading"},
 		},
 	} {
-		userErr := &UserError{}
-		require.True(t, errors.As(tt.pipelineErr, &userErr))
-		require.Equal(t, tt.expectedUserErr, userErr)
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			userErr := &UserError{}
+			require.True(t, errors.As(tt.pipelineErr, &userErr))
+			require.Equal(t, tt.expectedUserErr, userErr)
 
-		// Проверяем работоспособность для nil указателя.
-		var urErr *UserError
-		require.True(t, errors.As(tt.pipelineErr, &urErr))
-		require.Equal(t, tt.expectedUserErr, urErr)
+			// Проверяем работоспособность для nil указателя.
+			var urErr *UserError
+			require.True(t, errors.As(tt.pipelineErr, &urErr))
+			require.Equal(t, tt.expectedUserErr, urErr)
+		})
 	}
 }
