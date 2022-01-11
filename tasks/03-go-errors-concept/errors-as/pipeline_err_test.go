@@ -3,6 +3,9 @@ package pipe
 import (
 	"errors"
 	"fmt"
+	"io"
+	"net"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -31,6 +34,20 @@ func TestPipelineError_As(t *testing.T) {
 			var urErr *UserError
 			require.True(t, errors.As(tt.pipelineErr, &urErr))
 			require.Equal(t, tt.expectedUserErr, urErr)
+		})
+	}
+}
+
+func TestPipelineError_As_DifferentTypes(t *testing.T) {
+	for i, err := range []error{
+		io.EOF,
+		&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
+		nil,
+		net.UnknownNetworkError("tdp"),
+	} {
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
+			require.False(t, errors.Is(pipeLineErr, err))
 		})
 	}
 }
