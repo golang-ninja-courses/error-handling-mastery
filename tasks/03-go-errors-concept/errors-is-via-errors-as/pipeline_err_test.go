@@ -12,31 +12,38 @@ import (
 )
 
 func TestIsPipelineError(t *testing.T) {
-	t.Run("different types", func(t *testing.T) {
-		for _, err := range []error{
-			io.EOF,
-			&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
-			nil,
-			net.UnknownNetworkError("tdp"),
-		} {
-			assert.False(t, IsPipelineError(err, "parse", "/tmp/file.txt"))
-		}
-	})
+	users := []string{"Bob", "John"}
+	operations := []string{"bitcoin calculation", "file downloading"}
+	steps := []string{"init", "hash", "download", "save"}
 
-	t.Run("equal errors", func(t *testing.T) {
-		users := []string{"Bob", "John"}
-		operations := []string{"bitcoin calculation", "file downloading"}
-		steps := []string{"init", "hash", "download", "save"}
+	for _, u1 := range users {
+		for _, u2 := range users {
+			for _, op1 := range operations {
+				for _, op2 := range operations {
+					err := fmt.Errorf("wrap: %w", &PipelineError{
+						User:        u1,
+						Name:        op1,
+						FailedSteps: steps[:rand.Intn(len(steps))],
+					})
 
-		for _, u := range users {
-			for _, op := range operations {
-				err := fmt.Errorf("wrap: %w", &PipelineError{
-					User:        u,
-					Name:        op,
-					FailedSteps: steps[:rand.Intn(len(steps))],
-				})
-				assert.True(t, IsPipelineError(err, u, op))
+					isEqual := (u1 == u2) && (op1 == op2)
+					assert.Equal(t, isEqual, IsPipelineError(err, u2, op2),
+						"err: %#v, user: %v, pipeline name: %v", err, u2, op2)
+				}
 			}
 		}
-	})
+	}
+}
+
+func TestIsPipelineError_DifferentTypes(t *testing.T) {
+	for i, err := range []error{
+		io.EOF,
+		&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
+		nil,
+		net.UnknownNetworkError("tdp"),
+	} {
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			assert.False(t, IsPipelineError(err, "parse", "/tmp/file.txt"))
+		})
+	}
 }
