@@ -3,6 +3,7 @@ package errors
 import (
 	"errors"
 	"fmt"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,7 +41,7 @@ func TestIsAny_Is(t *testing.T) {
 	errSecondWrap := fmt.Errorf("second wrap: %w", errFirstWrap)
 	errWithMessage := newWithMessageError("any message", errSecondWrap)
 
-	assert.True(t, IsAny(errWithMessage, errReference))
+	assert.True(t, IsAny(errWithMessage, io.EOF, errReference))
 }
 
 func newWithMessageError(m string, err error) *withMessageError {
