@@ -22,6 +22,7 @@ func ExampleTrace() {
 func TestTrace(t *testing.T) {
 	t.Run("simple call", func(t *testing.T) {
 		frames := Trace()
+		// 3 = handmade-stacktrace.TestTrace.func1 + testing.tRunner + runtime.goexit
 		assert.Len(t, frames, 3)
 
 		re := regexp.MustCompile(`handmade-stacktrace\.TestTrace\.func1
@@ -33,7 +34,7 @@ testing\/testing\.go:\d{1,4}`)
 	})
 
 	t.Run("depth = 100", func(t *testing.T) {
-		frames := dive(100) // На самом деле чуть больше.
+		frames := dive(100) // На самом деле глубина чуть больше.
 		assert.Len(t, frames, 32)
 	})
 }
