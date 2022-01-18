@@ -8,13 +8,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// NOTE: Не редактируйте данный файл, чтобы не сбить пример и тесты ниже.
+
 func ExampleTrace() {
 	stack := Trace()
 	fmt.Println(stack[:1])
 
 	// Output:
 	// handmade-stacktrace.ExampleTrace
-	// handmade-stacktrace/stack_trace_test.go:12
+	// handmade-stacktrace/stack_trace_test.go:14
 }
 
 func TestTrace(t *testing.T) {
@@ -23,7 +25,7 @@ func TestTrace(t *testing.T) {
 		assert.Len(t, frames, 3)
 
 		re := regexp.MustCompile(`handmade-stacktrace\.TestTrace\.func1
-handmade-stacktrace\/stack_trace_test\.go:22
+handmade-stacktrace\/stack_trace_test\.go:24
 testing\.tRunner
 testing\/testing\.go:\d{1,4}`)
 		trace := frames[:2].String()
