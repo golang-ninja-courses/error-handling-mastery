@@ -3,9 +3,7 @@
 
 package main
 
-import (
-	"github.com/pkg/errors"
-)
+import "github.com/pkg/errors"
 
 func GimmeDeepError(depth int) error {
 	if depth == 1 {

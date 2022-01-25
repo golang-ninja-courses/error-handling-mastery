@@ -1,17 +1,19 @@
 package main
 
-import (
-	"testing"
-)
+import "testing"
+
+// ErrGlobal экспортируемая переменная уровня пакета,
+// необходимая для предотвращений оптимизаций компилятора.
+var ErrGlobal error
 
 func BenchmarkGimmeError(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = GimmeError()
+		ErrGlobal = GimmeError()
 	}
 }
 
 func BenchmarkGimmePkgError(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_ = GimmePkgError()
+		ErrGlobal = GimmePkgError()
 	}
 }
