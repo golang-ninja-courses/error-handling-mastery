@@ -2,18 +2,30 @@ package main
 
 import (
 	"errors"
+	"net"
 	"text/template"
 )
 
 func main() {
 	var err error
 
-	var t template.ExecError
-	var tPtr *template.ExecError
-
+	var (
+		t    template.ExecError
+		tPtr *template.ExecError
+	)
 	switch {
 	case errors.As(err, &t):
 	case errors.As(err, &tPtr):
+	}
+
+	var (
+		n    net.DNSError
+		nPtr *net.DNSError
+		_    = n
+	)
+	switch {
+	// case errors.As(err, &n): // Запаникует!
+	case errors.As(err, &nPtr):
 	}
 }
 
@@ -23,7 +35,7 @@ func (m *MyExecError) Error() string {
 	return "cool error"
 }
 
-func (m *MyExecError) Is(target error) {
+func (m *MyExecError) Is(target error) bool {
 	// Что выбрать?
 	switch target.(type) {
 	case *template.ExecError:
@@ -31,9 +43,10 @@ func (m *MyExecError) Is(target error) {
 	case template.ExecError:
 		// ...
 	}
+	return false
 }
 
-func (m *MyExecError) As(target interface{}) {
+func (m *MyExecError) As(target interface{}) bool {
 	// Что выбрать?
 	switch target.(type) {
 	case *template.ExecError:
@@ -41,4 +54,5 @@ func (m *MyExecError) As(target interface{}) {
 	case **template.ExecError:
 		// ...
 	}
+	return false
 }
