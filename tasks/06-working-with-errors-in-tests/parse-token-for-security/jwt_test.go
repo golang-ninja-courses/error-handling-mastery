@@ -98,7 +98,7 @@ func TestParseToken(t *testing.T) {
 				}
 
 				if e.Email() != tt.expectedEmail {
-					t.Fatalf("got email %#v, want: %#v", e.Email(), tt.expectedEmail)
+					t.Fatalf("got email %q, want: %q", e.Email(), tt.expectedEmail)
 				}
 			}
 
