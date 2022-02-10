@@ -52,7 +52,10 @@ func bar() {
 	}()
 }
 `,
-			expectedFuncs: []string{"fmt.Println", "anonymous func"},
+			expectedFuncs: []string{
+				"fmt.Println",
+				"anonymous func",
+			},
 		},
 		{
 			name: "deferred func",
@@ -64,6 +67,31 @@ func bar() {
 }
 `,
 			expectedFuncs: []string{"foo"},
+		},
+		{
+			name: "multiselector case",
+			src: `
+package main
+
+import "sync"
+
+type transport struct {
+	lock sync.Mutex
+}
+
+func (t *transport) connect() {
+	t.lock.Lock()
+    defer t.lock.Unlock()
+
+	didReadReq := make(chan struct{})
+	go func() {
+		defer close(didReadReq)
+	}()
+}`,
+			expectedFuncs: []string{
+				"t.lock.Unlock",
+				"close",
+			},
 		},
 	}
 
