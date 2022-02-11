@@ -6,7 +6,7 @@ func IsFunctionNotDefinedError(err error) bool {
 }
 
 // IsExecUnexportedFieldError говорит, является ли err template.ExecError,
-// а именно ошибкой использования неэспортируемого поля структуры.
+// а именно ошибкой использования неэкспортируемого поля структуры.
 func IsExecUnexportedFieldError(err error) bool {
 	return false
 }
