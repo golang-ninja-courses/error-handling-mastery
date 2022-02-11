@@ -25,16 +25,23 @@ func TestIsExecUnexportedFieldError(t *testing.T) {
 		)
 		require.Error(t, err)
 		assert.False(t, IsExecUnexportedFieldError(err))
+		assert.False(t, IsExecUnexportedFieldError(fmt.Errorf("parse and execute tmpl: %w", err)))
 	})
 
 	t.Run("partial assertion is not working", func(t *testing.T) {
-		assert.False(t, IsExecUnexportedFieldError(errors.New("is an unexported field of struct type")))
-		assert.False(t, IsExecUnexportedFieldError(errors.New("template")))
+		for _, err := range []error{
+			errors.New("is an unexported field of struct type"),
+			errors.New("template"),
+		} {
+			assert.False(t, IsExecUnexportedFieldError(err))
+			assert.False(t, IsExecUnexportedFieldError(fmt.Errorf("%w", err)))
+		}
 	})
 
 	t.Run("not template.Exec error", func(t *testing.T) {
-		lie := `template: example:1:3: executing "example" at <.name>: name is an unexported field of struct type`
-		assert.False(t, IsExecUnexportedFieldError(errors.New(lie)))
+		errFraudulent := errors.New(`template: example:1:3: executing "example" at <.name>: name is an unexported field of struct type`)
+		assert.False(t, IsExecUnexportedFieldError(errFraudulent))
+		assert.False(t, IsExecUnexportedFieldError(fmt.Errorf("%w", errFraudulent)))
 	})
 
 	t.Run("`unexported field` error", func(t *testing.T) {
@@ -44,6 +51,7 @@ func TestIsExecUnexportedFieldError(t *testing.T) {
 		)
 		require.Error(t, err)
 		assert.True(t, IsExecUnexportedFieldError(err))
+		assert.True(t, IsExecUnexportedFieldError(fmt.Errorf("parse and execute tmpl: %w", err)))
 	})
 }
 
@@ -56,29 +64,32 @@ func TestIsFunctionNotDefinedError(t *testing.T) {
 		err := parseAndExecuteTemplate(bytes.NewBuffer(nil), "example", `{{ with`, nil)
 		require.Error(t, err)
 		assert.False(t, IsFunctionNotDefinedError(err))
+		assert.False(t, IsFunctionNotDefinedError(fmt.Errorf("parse and execute tmpl: %w", err)))
 	})
 
 	t.Run("partial assertion is not working", func(t *testing.T) {
-		assert.False(t, IsFunctionNotDefinedError(errors.New("function")))
-		assert.False(t, IsFunctionNotDefinedError(errors.New("not defined")))
-		assert.False(t, IsFunctionNotDefinedError(errors.New("template")))
+		for _, err := range []error{
+			errors.New("function"),
+			errors.New("not defined"),
+			errors.New("template"),
+		} {
+			assert.False(t, IsFunctionNotDefinedError(err))
+			assert.False(t, IsFunctionNotDefinedError(fmt.Errorf("%w", err)))
+		}
 	})
 
 	t.Run("`function not defined` error", func(t *testing.T) {
 		err := parseAndExecuteTemplate(bytes.NewBuffer(nil), "example", `{{ call XXX }}`, nil)
 		require.Error(t, err)
 		assert.True(t, IsFunctionNotDefinedError(err))
+		assert.True(t, IsFunctionNotDefinedError(fmt.Errorf("parse and execute tmpl: %w", err)))
 	})
 }
 
 func parseAndExecuteTemplate(wr io.Writer, name, text string, data interface{}) error {
 	t, err := template.New(name).Parse(text)
 	if err != nil {
-		return fmt.Errorf("cannot parse template: %w", err)
+		return err
 	}
-
-	if err := t.Execute(wr, data); err != nil {
-		return fmt.Errorf("cannot execute template: %w", err)
-	}
-	return nil
+	return t.Execute(wr, data)
 }
