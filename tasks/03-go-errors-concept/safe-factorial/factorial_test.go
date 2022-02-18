@@ -10,12 +10,14 @@ import (
 func TestCalculate(t *testing.T) {
 	t.Run("negative n", func(t *testing.T) {
 		f, err := Calculate(-1)
+		require.Error(t, err)
 		require.ErrorIs(t, err, ErrNegativeN)
 		require.Equal(t, 0, f)
 	})
 
 	t.Run("too deep", func(t *testing.T) {
 		f, err := Calculate(1e3)
+		require.Error(t, err)
 		require.ErrorIs(t, err, ErrTooDeep)
 		require.Contains(t, err.Error(), strconv.Itoa(maxDepth))
 		require.Equal(t, 0, f)
