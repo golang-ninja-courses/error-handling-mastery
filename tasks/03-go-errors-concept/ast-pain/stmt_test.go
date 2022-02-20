@@ -115,5 +115,5 @@ func assertDeferredFuncs(t *testing.T, src string, expected []string) {
 		}
 		return node != nil
 	})
-	assert.Equal(t, funcNames, expected)
+	assert.Equal(t, expected, funcNames)
 }
