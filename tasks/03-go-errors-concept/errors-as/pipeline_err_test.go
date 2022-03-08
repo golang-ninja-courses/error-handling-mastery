@@ -30,10 +30,11 @@ func TestPipelineError_As(t *testing.T) {
 			require.True(t, errors.As(tt.pipelineErr, &userErr))
 			require.Equal(t, tt.expectedUserErr, userErr)
 
-			// Проверяем работоспособность для nil указателя.
-			var urErr *UserError
-			require.True(t, errors.As(tt.pipelineErr, &urErr))
-			require.Equal(t, tt.expectedUserErr, urErr)
+			t.Run("verify nil ptr", func(t *testing.T) {
+				var urErr *UserError
+				require.True(t, errors.As(tt.pipelineErr, &urErr))
+				require.Equal(t, tt.expectedUserErr, urErr)
+			})
 		})
 	}
 }
