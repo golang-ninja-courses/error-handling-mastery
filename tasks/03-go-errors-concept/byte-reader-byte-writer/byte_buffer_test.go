@@ -17,7 +17,7 @@ func TestByteBufferImplementsNecessary(t *testing.T) {
 func TestByteBufferIOReader(t *testing.T) {
 	var b ByteBuffer
 
-	expected := "TestByteBuffer_IoReader"
+	expected := "TestByteBuffer_IOReader"
 	var actual strings.Builder
 
 	for _, c := range []byte(expected) {
