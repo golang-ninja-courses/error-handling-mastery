@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestErrorsAreFilled(t *testing.T) {
+	assert.NotNil(t, errParseTemplate)
+	assert.NotNil(t, errExecuteTemplate)
+}
+
 func TestParseAndExecuteTemplate_Success(t *testing.T) {
 	tmpl := `
 <html>

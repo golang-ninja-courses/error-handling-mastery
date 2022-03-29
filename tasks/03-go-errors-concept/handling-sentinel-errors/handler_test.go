@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Errors(t *testing.T) {
+func TestErrors(t *testing.T) {
 	assert.EqualError(t, ErrAlreadyDone, "job is already done")
 	assert.EqualError(t, ErrInconsistentData, "job payload is corrupted")
 	assert.EqualError(t, ErrInvalidID, "invalid job id")
@@ -24,13 +24,17 @@ func TestHandler_Handle(t *testing.T) {
 		expectedPostpone time.Duration
 	}{
 		{
+			job:         Job{ID: 0},
+			expectedErr: nil,
+		},
+		{
 			job:         Job{ID: 1},
 			expectedErr: nil,
 		},
 		{
 			job:              Job{ID: 2},
 			expectedErr:      nil,
-			expectedPostpone: defaultPostpone,
+			expectedPostpone: time.Second,
 		},
 		{
 			job:         Job{ID: 3},

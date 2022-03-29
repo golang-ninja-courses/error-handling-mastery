@@ -34,6 +34,25 @@ cannot get image for event:
 `+firstErr.Error(), pErr.Error())
 }
 
+func TestPretty_MoreColons(t *testing.T) {
+	firstErr := sql.ErrNoRows
+
+	err := fmt.Errorf("user service: cannot get user schedule: %w",
+		fmt.Errorf("event service: cannot build data for event: %w",
+			fmt.Errorf("storage: cannot get image: %w", firstErr)))
+	t.Log(err)
+
+	pErr := Pretty(err)
+	require.Error(t, pErr)
+	t.Log(pErr)
+
+	assert.ErrorIs(t, pErr, firstErr)
+	assert.Equal(t, `user service: cannot get user schedule:
+event service: cannot build data for event:
+storage: cannot get image:
+`+firstErr.Error(), pErr.Error())
+}
+
 func TestPretty_NoError(t *testing.T) {
 	err := Pretty(nil)
 	require.NoError(t, err)

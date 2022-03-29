@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -12,6 +13,10 @@ func TestIsTemporary(t *testing.T) {
 		err         error
 		isTemporary bool
 	}{
+		{
+			err:         errors.New("integrity error"),
+			isTemporary: false,
+		},
 		{
 			err:         newNetErrorMock(true),
 			isTemporary: true,

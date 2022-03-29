@@ -21,6 +21,10 @@ func TestPipelineError_As(t *testing.T) {
 			expectedUserErr: &UserError{User: "Bob", Operation: "bitcoin calculation"},
 		},
 		{
+			pipelineErr:     &PipelineError{User: "Kate", Name: "connecting to server", FailedSteps: []string{}},
+			expectedUserErr: &UserError{User: "Kate", Operation: "connecting to server"},
+		},
+		{
 			pipelineErr:     &PipelineError{User: "Alex", Name: "file downloading"},
 			expectedUserErr: &UserError{User: "Alex", Operation: "file downloading"},
 		},
@@ -45,6 +49,7 @@ func TestPipelineError_As_DifferentTypes(t *testing.T) {
 		&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
 		nil,
 		net.UnknownNetworkError("tdp"),
+		errors.New("integration error"),
 	} {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}

@@ -16,13 +16,17 @@ func TestHandler_Handle(t *testing.T) {
 		expectedPostpone time.Duration
 	}{
 		{
+			job:         Job{ID: 0},
+			expectedErr: nil,
+		},
+		{
 			job:         Job{ID: 1},
 			expectedErr: nil,
 		},
 		{
 			job:              Job{ID: 2},
 			expectedErr:      nil,
-			expectedPostpone: defaultPostpone,
+			expectedPostpone: time.Second,
 		},
 		{
 			job:         Job{ID: 3},
@@ -83,12 +87,40 @@ func TestErrorHelpers(t *testing.T) {
 			isTemporary:     true,
 			shouldBeSkipped: false,
 		},
+		{
+			err:             &processErrorMock{t: false, s: false},
+			isTemporary:     false,
+			shouldBeSkipped: false,
+		},
+		{
+			err:             &processErrorMock{t: false, s: true},
+			isTemporary:     false,
+			shouldBeSkipped: true,
+		},
+		{
+			err:             &processErrorMock{t: true, s: false},
+			isTemporary:     true,
+			shouldBeSkipped: false,
+		},
+		{
+			err:             &processErrorMock{t: true, s: true},
+			isTemporary:     true,
+			shouldBeSkipped: true,
+		},
 	}
 
 	for _, tt := range cases {
-		t.Run(fmt.Sprintf("%T", tt.err), func(t *testing.T) {
-			assert.Equal(t, tt.isTemporary, isTemporary(tt.err))
-			assert.Equal(t, tt.shouldBeSkipped, shouldBeSkipped(tt.err))
+		t.Run("", func(t *testing.T) {
+			assert.Equal(t, tt.isTemporary, isTemporary(tt.err), "%#v", tt.err)
+			assert.Equal(t, tt.shouldBeSkipped, shouldBeSkipped(tt.err), "%#v", tt.err)
 		})
 	}
 }
+
+type processErrorMock struct {
+	t, s bool
+}
+
+func (processErrorMock) Error() string      { return "process() error mock" }
+func (p *processErrorMock) Temporary() bool { return p.t }
+func (p *processErrorMock) Skip() bool      { return p.s }

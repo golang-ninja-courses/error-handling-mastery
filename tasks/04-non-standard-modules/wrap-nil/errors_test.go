@@ -20,4 +20,9 @@ func TestWrapf(t *testing.T) {
 		err := Wrapf(nil, "some message")
 		assert.Nil(t, err)
 	})
+
+	t.Run("nil wrapping with args", func(t *testing.T) {
+		err := Wrapf(nil, "user %d", 42)
+		assert.Nil(t, err)
+	})
 }

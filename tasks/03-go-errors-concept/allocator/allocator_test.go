@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestErrors(t *testing.T) {
@@ -11,40 +12,65 @@ func TestErrors(t *testing.T) {
 	assert.EqualError(t, new(ArgOutOfDomainError), "numerical argument out of domain of func")
 }
 
-func TestAllocateUserID(t *testing.T) {
-	t.Run("allocate from admin", func(t *testing.T) {
-		buffer, err := Allocate(Admin, MinMemoryBlock)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, buffer)
-	})
+func TestAllocate(t *testing.T) {
+	cases := []struct {
+		name                  string
+		uid                   int
+		size                  int
+		isNotPermittedError   bool
+		isArgOutOfDomainError bool
+	}{
+		{
+			name:                  "invalid size from admin",
+			uid:                   Admin,
+			size:                  1023,
+			isArgOutOfDomainError: true,
+		},
+		{
+			name: "min valid size from admin",
+			uid:  Admin,
+			size: 1024,
+		},
+		{
+			name: "valid size from admin",
+			uid:  Admin,
+			size: 2048,
+		},
+		{
+			name:                "invalid size from unknown user",
+			uid:                 42,
+			size:                1023,
+			isNotPermittedError: true,
+		},
+		{
+			name:                "min valid size from unknown user",
+			uid:                 42,
+			size:                1024,
+			isNotPermittedError: true,
+		},
+		{
+			name:                "valid size from unknown user",
+			uid:                 42,
+			size:                2048,
+			isNotPermittedError: true,
+		},
+	}
 
-	t.Run("allocate from unknown user", func(t *testing.T) {
-		buffer, err := Allocate(123, MinMemoryBlock)
-		assert.Error(t, err)
-		assert.True(t, isNotPermittedError(err))
-		assert.Nil(t, buffer)
-	})
-}
-
-func TestAllocateSize(t *testing.T) {
-	t.Run("allocate min memory block", func(t *testing.T) {
-		buffer, err := Allocate(Admin, MinMemoryBlock)
-		assert.NoError(t, err)
-		assert.Len(t, buffer, MinMemoryBlock)
-	})
-
-	t.Run("allocate too low memory block", func(t *testing.T) {
-		buffer, err := Allocate(Admin, 512)
-		assert.Error(t, err)
-		assert.True(t, isArgOutOfDomainError(err))
-		assert.Nil(t, buffer)
-	})
-
-	t.Run("allocate memory block with valid size", func(t *testing.T) {
-		buffer, err := Allocate(Admin, 2048)
-		assert.NoError(t, err)
-		assert.Len(t, buffer, 2048)
-	})
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			buffer, err := Allocate(tt.uid, tt.size)
+			if tt.isNotPermittedError {
+				assert.True(t, isNotPermittedError(err))
+				assert.Nil(t, buffer)
+			} else if tt.isArgOutOfDomainError {
+				assert.True(t, isArgOutOfDomainError(err))
+				assert.Nil(t, buffer)
+			} else {
+				require.NoError(t, err)
+				assert.Len(t, buffer, tt.size)
+			}
+		})
+	}
 }
 
 func isNotPermittedError(err error) bool {

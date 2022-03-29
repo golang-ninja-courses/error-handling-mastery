@@ -16,13 +16,17 @@ func TestHandler_Handle(t *testing.T) {
 		expectedPostpone time.Duration
 	}{
 		{
+			job:         Job{ID: 0},
+			expectedErr: nil,
+		},
+		{
 			job:         Job{ID: 1},
 			expectedErr: nil,
 		},
 		{
 			job:              Job{ID: 2},
 			expectedErr:      nil,
-			expectedPostpone: defaultPostpone,
+			expectedPostpone: time.Second,
 		},
 		{
 			job:         Job{ID: 3},

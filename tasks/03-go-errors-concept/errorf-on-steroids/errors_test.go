@@ -108,13 +108,14 @@ func TestErrorf(t *testing.T) {
 	})
 
 	t.Run("multiple Errorf", func(t *testing.T) {
-		err := Errorf("cannot read file: %w", io.EOF)
+		errBadDescriptor := errors.New("bad descriptor")
+		err := Errorf("cannot read file: %w", errBadDescriptor)
 		err = Errorf("cannot load config: %w", err)
 		err = Errorf("cannot start app: %w", err)
 
 		require.Error(t, err)
-		require.ErrorIs(t, err, io.EOF)
-		require.EqualError(t, err, "cannot start app: cannot load config: cannot read file: EOF")
+		require.ErrorIs(t, err, errBadDescriptor)
+		require.EqualError(t, err, "cannot start app: cannot load config: cannot read file: bad descriptor")
 	})
 
 	t.Run("std wrapping", func(t *testing.T) {

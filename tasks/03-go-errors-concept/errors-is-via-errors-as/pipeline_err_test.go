@@ -1,6 +1,7 @@
 package pipe
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -41,6 +42,7 @@ func TestIsPipelineError_DifferentTypes(t *testing.T) {
 		&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
 		nil,
 		net.UnknownNetworkError("tdp"),
+		errors.New("integration error"),
 	} {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			assert.False(t, IsPipelineError(err, "parse", "/tmp/file.txt"))
