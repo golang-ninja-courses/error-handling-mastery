@@ -44,18 +44,28 @@ func TestPipelineError_As(t *testing.T) {
 }
 
 func TestPipelineError_As_DifferentTypes(t *testing.T) {
-	for i, err := range []error{
-		io.EOF,
-		&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
-		nil,
-		net.UnknownNetworkError("tdp"),
-		errors.New("integration error"),
-	} {
-		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
-			pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
-			require.False(t, errors.As(err, &pipeLineErr))
-			require.Equal(t, "parse", pipeLineErr.User)
-			require.Equal(t, "/tmp/file.txt", pipeLineErr.Name)
-		})
-	}
+	t.Run("from pipeline error", func(t *testing.T) {
+		target := new(os.PathError)
+		pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
+		require.False(t, errors.As(pipeLineErr, &target))
+		require.Equal(t, "parse", pipeLineErr.User)
+		require.Equal(t, "/tmp/file.txt", pipeLineErr.Name)
+	})
+
+	t.Run("to pipeline error", func(t *testing.T) {
+		for i, err := range []error{
+			io.EOF,
+			&os.PathError{Op: "parse", Path: "/tmp/file.txt"},
+			nil,
+			net.UnknownNetworkError("tdp"),
+			errors.New("integration error"),
+		} {
+			t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+				pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
+				require.False(t, errors.As(err, &pipeLineErr))
+				require.Equal(t, "parse", pipeLineErr.User)
+				require.Equal(t, "/tmp/file.txt", pipeLineErr.Name)
+			})
+		}
+	})
 }

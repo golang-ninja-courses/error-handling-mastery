@@ -60,6 +60,7 @@ func TestPipelineError_Is_DifferentTypes(t *testing.T) {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			pipeLineErr := &PipelineError{User: "parse", Name: "/tmp/file.txt"}
 			require.False(t, errors.Is(pipeLineErr, err))
+			require.False(t, errors.Is(err, pipeLineErr))
 		})
 	}
 }
