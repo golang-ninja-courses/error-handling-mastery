@@ -86,7 +86,7 @@ func TestIsFunctionNotDefinedError(t *testing.T) {
 	})
 }
 
-func parseAndExecuteTemplate(wr io.Writer, name, text string, data interface{}) error {
+func parseAndExecuteTemplate(wr io.Writer, name, text string, data any) error {
 	t, err := template.New(name).Parse(text)
 	if err != nil {
 		return err

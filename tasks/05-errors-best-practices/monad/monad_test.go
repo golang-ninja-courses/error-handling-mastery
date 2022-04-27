@@ -82,7 +82,7 @@ var (
 	errEmptyField            = errors.New("field is empty")
 )
 
-func unmarshalRequest(v interface{}) M {
+func unmarshalRequest(v any) M {
 	r, ok := v.(io.Reader)
 	if !ok {
 		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))
@@ -95,7 +95,7 @@ func unmarshalRequest(v interface{}) M {
 	return Unit(req)
 }
 
-func validateEmail(v interface{}) M {
+func validateEmail(v any) M {
 	req, ok := v.(UserRegistrationRequest)
 	if !ok {
 		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))
@@ -106,7 +106,7 @@ func validateEmail(v interface{}) M {
 	return Unit(v)
 }
 
-func validatePassword(v interface{}) M {
+func validatePassword(v any) M {
 	req, ok := v.(UserRegistrationRequest)
 	if !ok {
 		return Err(fmt.Errorf("%w: %T", errUnexpectedTypeInMonad, v))

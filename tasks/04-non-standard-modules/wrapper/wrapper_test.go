@@ -19,12 +19,12 @@ func TestWrapper(t *testing.T) {
 	assertImplements(t, ifaceObj, withBothError(0))
 }
 
-func assertImplements(t *testing.T, ifaceObj interface{}, obj interface{}) {
+func assertImplements(t *testing.T, ifaceObj any, obj any) {
 	t.Helper()
 	assert.Implements(t, ifaceObj, obj)
 }
 
-func assertNotImplements(t *testing.T, ifaceObj interface{}, obj interface{}) {
+func assertNotImplements(t *testing.T, ifaceObj any, obj any) {
 	t.Helper()
 	ifaceType := reflect.TypeOf(ifaceObj).Elem()
 	assert.False(t, reflect.TypeOf(obj).Implements(ifaceType))

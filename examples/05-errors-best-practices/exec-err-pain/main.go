@@ -46,7 +46,7 @@ func (m *MyExecError) Is(target error) bool {
 	return false
 }
 
-func (m *MyExecError) As(target interface{}) bool {
+func (m *MyExecError) As(target any) bool {
 	// Что выбрать?
 	switch target.(type) {
 	case *template.ExecError:

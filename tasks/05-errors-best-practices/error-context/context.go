@@ -1,6 +1,6 @@
 package errctx
 
-type Fields map[string]interface{}
+type Fields map[string]any
 
 func AppendTo(err error, fields Fields) error {
 	// Реализуй меня.

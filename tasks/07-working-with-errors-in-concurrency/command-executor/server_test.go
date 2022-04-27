@@ -93,7 +93,7 @@ func (s *TestServerSuite) TestFlow() {
 	s.exec.EXPECT().ResultsCh().AnyTimes().Return(resultsCh)
 	s.exec.EXPECT().Exec(gomock.Any()).Times(n).DoAndReturn(func(cid ce.CommandID) error {
 		var err error
-		var data interface{}
+		var data any
 
 		switch cid.S() {
 		case "1":

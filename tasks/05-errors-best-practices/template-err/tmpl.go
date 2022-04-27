@@ -10,7 +10,7 @@ var (
 	errExecuteTemplate error
 )
 
-func ParseAndExecuteTemplate(wr io.Writer, name, text string, data interface{}) {
+func ParseAndExecuteTemplate(wr io.Writer, name, text string, data any) {
 	t, _ := template.New(name).Parse(text)
 	t.Execute(wr, data)
 }

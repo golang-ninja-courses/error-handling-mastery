@@ -181,7 +181,7 @@ func newExecutorMock(cmd string, err error) executorMock {
 	}
 }
 
-func (e executorMock) Exec(ctx context.Context, cmd string, args ...interface{}) error {
+func (e executorMock) Exec(ctx context.Context, cmd string, args ...any) error {
 	if e.expectedCmd == cmd {
 		return e.expectedErr
 	}

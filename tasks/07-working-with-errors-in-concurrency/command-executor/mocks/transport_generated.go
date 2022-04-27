@@ -74,7 +74,7 @@ func (m *MockITransport) Send(c *commandexecutor.ProtoCommandResult) error {
 }
 
 // Send indicates an expected call of Send.
-func (mr *MockITransportMockRecorder) Send(c interface{}) *gomock.Call {
+func (mr *MockITransportMockRecorder) Send(c any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Send", reflect.TypeOf((*MockITransport)(nil).Send), c)
 }

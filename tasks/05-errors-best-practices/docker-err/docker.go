@@ -3,7 +3,7 @@ package docker
 import "context"
 
 type Executor interface {
-	Exec(ctx context.Context, cmd string, args ...interface{}) error
+	Exec(ctx context.Context, cmd string, args ...any) error
 }
 
 type Docker struct{}

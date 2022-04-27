@@ -1,5 +1,5 @@
 # На момент завершения работы над курсом версия линтера:
-# golangci-lint has version 1.42.1 built from 54f4301d on 2021-09-06T17:05:10Z
+# golangci-lint has version 1.45.2 built from 8bdc4d3f on 2022-03-24T11:51:26Z
 
 run:
   skip-dirs-use-default: false
@@ -52,7 +52,10 @@ issues:
 
 linters-settings:
   gci:
-    local-prefixes: github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go
+    sections:
+      - standard
+      - default
+      - prefix(github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go)
 
   lll:
     line-length: 130
@@ -67,6 +70,7 @@ linters:
   disable-all: true
   enable:
     - asciicheck
+    - bidichk
     - bodyclose
     - deadcode
     - depguard
@@ -74,6 +78,7 @@ linters:
     - dupl
     - durationcheck
     - errcheck
+    - errchkjson
     - errname
     - exportloopref
     - funlen
@@ -100,6 +105,7 @@ linters:
     - misspell
     - nestif
     - nilerr
+    - nilnil
     - noctx
     - nolintlint
     - prealloc
@@ -111,6 +117,7 @@ linters:
     - structcheck
     - stylecheck
     - tagliatelle
+    - tenv
     - thelper
     - tparallel
     - typecheck

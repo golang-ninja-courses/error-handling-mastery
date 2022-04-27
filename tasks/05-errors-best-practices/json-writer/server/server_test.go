@@ -69,9 +69,9 @@ func (s *statefulLogger) Error(msg string) {
 }
 
 type dataProviderMock struct {
-	v interface{}
+	v any
 }
 
-func (d dataProviderMock) Data() interface{} {
+func (d dataProviderMock) Data() any {
 	return d.v
 }

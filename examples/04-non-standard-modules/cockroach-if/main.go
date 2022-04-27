@@ -11,7 +11,7 @@ type isTemporary interface {
 	Temporary() bool
 }
 
-func IsTemporary(err error) (interface{}, bool) {
+func IsTemporary(err error) (any, bool) {
 	e, ok := err.(isTemporary)
 	return e, ok && e.Temporary() // Возвращаем не только флаг, но и ошибку.
 }

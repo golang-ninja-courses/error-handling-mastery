@@ -14,7 +14,7 @@ func (c CommandID) S() string {
 
 type CommandResult struct {
 	ID   CommandID
-	Data interface{}
+	Data any
 	Err  error
 }
 

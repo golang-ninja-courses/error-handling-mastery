@@ -7,7 +7,7 @@ type ILogger interface {
 }
 
 type IDataProvider interface {
-	Data() interface{}
+	Data() any
 }
 
 type Server struct {

@@ -13,8 +13,8 @@ tasks:
 
   tools:install:
     - echo "Install local tools..."
-    - (which gci > /dev/null) || GO111MODULE=off go get -u github.com/daixiang0/gci
-    - (which gofumpt > /dev/null) || GO111MODULE=off go get -u mvdan.cc/gofumpt
+    - (which gci > /dev/null) || GO111MODULE=off go install github.com/daixiang0/gci@latest
+    - (which gofumpt > /dev/null) || GO111MODULE=off go install mvdan.cc/gofumpt@latest
 
   tidy:
     cmds:
@@ -25,7 +25,7 @@ tasks:
     cmds:
       - echo "Fmt..."
       - gofumpt -w .
-      - gci -w -local github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go . > /dev/null
+      - gci write -s Std -s Def -s "Prefix(github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go)" . 2> /dev/null
 
   lint:
     cmds:
@@ -34,12 +34,12 @@ tasks:
 
   lint:examples:
     - echo "Lint examples..."
-    - golangci-lint run --build-tags pkg,pkg.msg.stack --fix ./examples/...
+    - golangci-lint run --build-tags pkg,pkg.msg.stack ./examples/...
 
   lint:tasks:
     - echo "Lint tasks..."
-    - golangci-lint run --fix ./tasks/...
+    - golangci-lint run ./tasks/...
 
   lint:dir:
     - echo "Lint..."
-    - golangci-lint run --fix {{.CLI_ARGS}}
+    - golangci-lint run {{.CLI_ARGS}}

@@ -24,7 +24,7 @@ func (l stdLogger) Error(msg string) {
 
 type simpleMsgProvider struct{}
 
-func (s simpleMsgProvider) Data() interface{} {
+func (s simpleMsgProvider) Data() any {
 	return struct {
 		Msg string `json:"msg"`
 	}{Msg: "OK"}
