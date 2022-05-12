@@ -2,6 +2,7 @@ package requests
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,12 +21,16 @@ func ExampleSearchRequest_Validate() {
 		panic("invalid Validate() realization")
 	}
 
-	fmt.Println(err.Error())
+	fmt.Println(errorMsg(err))
 	// Output:
 	// validation errors:
 	//     exp is not regexp: error parsing regexp: missing closing ): `(.*golang.*`
 	//     invalid page: -1
 	//     invalid page size: 3000 > 100
+}
+
+func errorMsg(err error) string {
+	return strings.TrimSpace(strings.ReplaceAll(err.Error(), "\t", "    "))
 }
 
 func TestSearchRequest_Validate(t *testing.T) {
