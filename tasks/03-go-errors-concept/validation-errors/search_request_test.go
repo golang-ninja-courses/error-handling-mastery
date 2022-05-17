@@ -135,7 +135,7 @@ func TestSearchRequest_Validate_multipleErr(t *testing.T) {
 			},
 			exp: []expected{
 				{err: errIsNotRegexp, text: or{"(.*golang.*"}},
-				{err: errInvalidPageSize, text: or{"101 > 10"}},
+				{err: errInvalidPageSize, text: or{"101 > 100"}},
 			},
 		},
 		{
@@ -146,7 +146,7 @@ func TestSearchRequest_Validate_multipleErr(t *testing.T) {
 			},
 			exp: []expected{
 				{err: errInvalidPage, text: or{"-2"}},
-				{err: errInvalidPageSize, text: or{"101 > 10"}},
+				{err: errInvalidPageSize, text: or{"101 > 100"}},
 			},
 		},
 	}
