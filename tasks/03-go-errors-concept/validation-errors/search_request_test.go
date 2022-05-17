@@ -75,28 +75,104 @@ func TestSearchRequest_Validate(t *testing.T) {
 }
 
 func TestSearchRequest_Validate_multipleErr(t *testing.T) {
-	req := SearchRequest{
-		Exp:      "(.*golang.*",
-		Page:     -1,
-		PageSize: 3000,
+	type or = []string
+
+	type expected struct {
+		err  error
+		text or
 	}
 
-	err := req.Validate()
-	require.Error(t, err)
+	cases := []struct {
+		name string
+		req  SearchRequest
+		exp  []expected
+	}{
+		{
+			name: "regexp  negative page  big page size",
+			req: SearchRequest{
+				Exp:      "(.*golang.*",
+				Page:     -1,
+				PageSize: 3000,
+			},
+			exp: []expected{
+				{err: errIsNotRegexp, text: or{"(.*golang.*"}},
+				{err: errInvalidPage, text: or{"-1"}},
+				{err: errInvalidPageSize, text: or{"3000 > 100"}},
+			},
+		},
+		{
+			name: "regexp  negative page  zero page size",
+			req: SearchRequest{
+				Exp:      "(.*golang.*",
+				Page:     -1,
+				PageSize: 0,
+			},
+			exp: []expected{
+				{err: errIsNotRegexp, text: or{"(.*golang.*"}},
+				{err: errInvalidPage, text: or{"-1"}},
+				{err: errInvalidPageSize, text: or{"0 < 1", "0 <= 0"}},
+			},
+		},
+		{
+			name: "regexp  negative page  negative page size",
+			req: SearchRequest{
+				Exp:      "(.*golang.*",
+				Page:     -1,
+				PageSize: -1,
+			},
+			exp: []expected{
+				{err: errIsNotRegexp, text: or{"(.*golang.*"}},
+				{err: errInvalidPage, text: or{"-1"}},
+				{err: errInvalidPageSize, text: or{"-1 < 1", "-1 <= 0"}},
+			},
+		},
+		{
+			name: "regexp  big page size",
+			req: SearchRequest{
+				Exp:      "(.*golang.*",
+				Page:     10,
+				PageSize: 101,
+			},
+			exp: []expected{
+				{err: errIsNotRegexp, text: or{"(.*golang.*"}},
+				{err: errInvalidPageSize, text: or{"101 > 10"}},
+			},
+		},
+		{
+			name: "negative page  big page size",
+			req: SearchRequest{
+				Page:     -2,
+				PageSize: 101,
+			},
+			exp: []expected{
+				{err: errInvalidPage, text: or{"-2"}},
+				{err: errInvalidPageSize, text: or{"101 > 10"}},
+			},
+		},
+	}
 
-	assert.ErrorIs(t, err, errIsNotRegexp)
-	assert.Contains(t, err.Error(), "(.*golang.*")
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.req.Validate()
+			require.Error(t, err)
 
-	assert.ErrorIs(t, err, errInvalidPage)
-	assert.Contains(t, err.Error(), "-1")
+			for _, e := range tt.exp {
+				assert.ErrorIs(t, err, e.err)
+				assert.True(t, containsAnyExclusively(err.Error(), e.text),
+					"err msg %q do not contains exclusively one of %#v", err, e.text)
+			}
+		})
+	}
+}
 
-	assert.ErrorIs(t, err, errInvalidPageSize)
-	assert.Contains(t, err.Error(), "3000 > 100")
-
-	// Negative PageSize.
-	req.PageSize = -1
-	err = req.Validate()
-	require.Error(t, err)
-	assert.ErrorIs(t, err, errInvalidPageSize)
-	assert.Contains(t, err.Error(), "-1 < 0")
+func containsAnyExclusively(s string, subs []string) bool {
+	var result bool
+	for _, substr := range subs {
+		c := strings.Contains(s, substr)
+		if result && c {
+			return false
+		}
+		result = result || c
+	}
+	return result
 }
