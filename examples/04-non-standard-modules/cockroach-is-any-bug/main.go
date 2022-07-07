@@ -1,3 +1,4 @@
+// https://github.com/cockroachdb/errors/issues/97
 package main
 
 import (
