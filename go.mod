@@ -14,7 +14,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hydrogen18/memlistener v0.0.0-20200120041712-dcc25e7acd91
 	github.com/jackc/pgx v3.6.2+incompatible
-	github.com/labstack/echo/v4 v4.7.2
+	github.com/labstack/echo/v4 v4.9.0
 	github.com/pkg/errors v0.9.1
 	github.com/quasilyte/go-ruleguard/dsl v0.3.19
 	github.com/sirupsen/logrus v1.8.1
