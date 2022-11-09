@@ -65,7 +65,9 @@ func (c clientMock) Do(_ *http.Request) (*http.Response, error) {
 	return c.doResponse, c.doErr
 }
 
-type netErrMock struct { // Реализуй меня.
+type netErrMock struct { // Добавь мне методов.
+	isTemporary bool
+	isTimeout   bool
 }
 
 func newNetErrMock(isTemporary, isTimeout bool) *netErrMock {
