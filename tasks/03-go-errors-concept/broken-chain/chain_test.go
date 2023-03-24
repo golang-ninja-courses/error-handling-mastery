@@ -28,3 +28,14 @@ func TestProcessMessage(t *testing.T) {
 	assert.EqualError(t, err,
 		`cannot process msg: cannot write data: save msg "8fbad38c-c5c5-11eb-b876-1e00d13a7870" error: short write`)
 }
+
+type EOFBrotherError struct{}              //
+func (*EOFBrotherError) Error() string     { return "EOF" }
+func (*EOFBrotherError) Is(err error) bool { return err == io.EOF }
+
+func Test_saveMsgError_IsInTheChain(t *testing.T) {
+	err := fmt.Errorf("wrap 2: %w", &saveMsgError{
+		err: fmt.Errorf("wrap 1: %w", new(EOFBrotherError)),
+	})
+	assert.ErrorIs(t, err, io.EOF)
+}
