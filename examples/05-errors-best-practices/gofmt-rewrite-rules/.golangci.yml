@@ -1,0 +1,13 @@
+linters-settings:
+  gofmt:
+    simplify: true
+    rewrite-rules:
+      - pattern: 'nil != err'
+        replacement: 'err != nil'
+      - pattern: 'err == nil'
+        replacement: 'nil == err'
+
+linters:
+  disable-all: true
+  enable:
+    - gofmt
