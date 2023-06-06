@@ -18,13 +18,8 @@ func main() {
 func collectErrors() error {
 	var mErr *multierror.Error
 
-	if err := foo(); err != nil {
-		mErr = multierror.Append(mErr, err)
-	}
-
-	if err := bar(); err != nil {
-		mErr = multierror.Append(mErr, err)
-	}
+	mErr = multierror.Append(mErr, foo())
+	mErr = multierror.Append(mErr, bar())
 
 	if mErr != nil {
 		mErr.ErrorFormat = func(errors []error) string {
