@@ -18,6 +18,7 @@ func (m M) Bind(f func(v any) M) M {
 }
 
 // Unpack возвращает значение и ошибку, хранимые в монаде.
+// При отсутствии и ошибки и значения метод возвращает ErrNoMonadValue.
 func (m M) Unpack() (any, error) {
 	// Реализуй меня.
 	return nil, nil
