@@ -15,7 +15,7 @@ import (
 
 func TestPipelineError_Is(t *testing.T) {
 	users := []string{"Bob", "John", ""}
-	operations := []string{"bitcoin calculation", "file downloading"}
+	operations := []string{"bitcoin calculation", "file downloading", ""}
 	steps := []string{"init", "hash", "download", "save"}
 
 	for _, u1 := range users {
