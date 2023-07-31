@@ -49,16 +49,6 @@ func hashicorpMultierr() error {
 	return result
 }
 
-func Process(input []string) error {
-	var result error
-	for _, s := range input {
-		if err := process(s); err != nil {
-			result = multierror.Append(result, err)
-		}
-	}
-	return result
-}
-
 var errAcquireTimeout = errors.New("timeout acquiring connection from pool")
 
 func step1() error { return errAcquireTimeout }
