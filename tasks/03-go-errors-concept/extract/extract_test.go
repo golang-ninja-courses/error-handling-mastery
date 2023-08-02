@@ -12,14 +12,19 @@ import (
 
 func TestChain(t *testing.T) {
 	errInvalidCursor := errors.New("invalid cursor")
+	vWrapped := fmt.Errorf("parse request: %v", errInvalidCursor)
 
 	cases := []struct {
 		in       error
 		expected []error
 	}{
 		{
-			in:       io.EOF,
-			expected: []error(nil),
+			in:       errInvalidCursor,
+			expected: []error{errInvalidCursor},
+		},
+		{
+			in:       vWrapped,
+			expected: []error{vWrapped},
 		},
 		{
 			in:       fmt.Errorf("parse request: %w", errInvalidCursor),
