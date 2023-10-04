@@ -38,7 +38,7 @@ db_error_t db_get_user_by_id(int uid, user_t **user)
     u->id = uid;
 
     u->email = (char *) calloc(14, sizeof(char));
-    strncpy(u->email, "bob@gmail.com", 13);
+    strncpy(u->email, "bob@gmail.com\0", 14);
     if (u->email == NULL) {
         free(u);
         return DB_ERR_INTERNAL;
