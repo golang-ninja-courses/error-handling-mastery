@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // NOTE: Не редактируйте данный файл, чтобы не сбить пример и тесты ниже.
@@ -16,17 +17,17 @@ func ExampleTrace() {
 
 	// Output:
 	// handmade-stacktrace.ExampleTrace
-	// handmade-stacktrace/stack_trace_test.go:14
+	// handmade-stacktrace/stack_trace_test.go:15
 }
 
 func TestTrace(t *testing.T) {
 	t.Run("simple call", func(t *testing.T) {
 		frames := Trace()
 		// 3 = handmade-stacktrace.TestTrace.func1 + testing.tRunner + runtime.goexit
-		assert.Len(t, frames, 3)
+		require.Len(t, frames, 3)
 
 		re := regexp.MustCompile(`handmade-stacktrace\.TestTrace\.func1
-handmade-stacktrace\/stack_trace_test\.go:24
+handmade-stacktrace\/stack_trace_test\.go:25
 testing\.tRunner
 testing\/testing\.go:\d{1,4}`)
 		trace := frames[:2].String()

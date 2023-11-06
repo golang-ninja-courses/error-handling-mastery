@@ -59,7 +59,7 @@ func TestByteBufferIOWriter(t *testing.T) {
 func TestByteBufferReadFromEmptyBuffer(t *testing.T) {
 	var b ByteBuffer
 	n, err := b.ReadByte()
-	assert.Equal(t, byte(0), n)
+	assert.EqualValues(t, 0, n)
 	assert.True(t, isEndOfBuffer(err))
 }
 

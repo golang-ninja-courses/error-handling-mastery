@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func ExampleProcessMessage() {
@@ -22,7 +23,7 @@ func ExampleProcessMessage() {
 
 func TestProcessMessage(t *testing.T) {
 	err := ProcessMessage()
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.ErrorIs(t, err, io.ErrShortWrite)
 	assert.NotErrorIs(t, err, io.EOF)
 	assert.EqualError(t, err,

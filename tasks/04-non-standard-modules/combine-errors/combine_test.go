@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func ExampleCombine() {
@@ -33,7 +34,7 @@ func TestCombine(t *testing.T) {
 	)
 
 	combinedErr := Combine(err, err2, err3, err4)
-	assert.NotNil(t, combinedErr)
+	require.NotNil(t, combinedErr)
 	assert.ErrorIs(t, combinedErr, err)
 	assert.NotErrorIs(t, combinedErr, err2)
 	assert.NotErrorIs(t, combinedErr, err3)
@@ -81,7 +82,7 @@ func TestCombine_NoOtherErrors(t *testing.T) {
 	err := errors.New("an error")
 
 	combinedErr := Combine(err)
-	assert.NotNil(t, combinedErr)
+	require.NotNil(t, combinedErr)
 	assert.ErrorIs(t, combinedErr, err)
 }
 
