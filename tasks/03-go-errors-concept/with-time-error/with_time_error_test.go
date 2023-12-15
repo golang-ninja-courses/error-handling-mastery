@@ -41,3 +41,18 @@ func TestWithTimeError(t *testing.T) {
 	require.ErrorAs(t, err, &timed)
 	require.Equal(t, 2, timed.Time().Second())
 }
+
+func TestWithTimeError_FrozenTime(t *testing.T) {
+	var timed interface {
+		Time() time.Time
+	}
+
+	err := NewWithTimeError(context.Canceled)
+	require.ErrorAs(t, err, &timed)
+
+	t1 := timed.Time()
+	time.Sleep(time.Millisecond)
+	t2 := timed.Time()
+	require.True(t, t1.Equal(t2),
+		"Time() must return the time the error was created, not the time the method was called")
+}
