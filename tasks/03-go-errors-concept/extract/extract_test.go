@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestChain(t *testing.T) {
+func TestExtract(t *testing.T) {
 	errInvalidCursor := errors.New("invalid cursor")
 	vWrapped := fmt.Errorf("parse request: %v", errInvalidCursor)
 
@@ -28,6 +28,10 @@ func TestChain(t *testing.T) {
 		},
 		{
 			in:       fmt.Errorf("parse request: %w", errInvalidCursor),
+			expected: []error{errInvalidCursor},
+		},
+		{
+			in:       fmt.Errorf("parse request: %w", fmt.Errorf("decode cursor: %w", errInvalidCursor)),
 			expected: []error{errInvalidCursor},
 		},
 		{
