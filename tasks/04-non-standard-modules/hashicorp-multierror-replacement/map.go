@@ -13,7 +13,7 @@ func MapV2[T any](fn func(v T) error, input []T) error {
 }
 
 // Map применяет функцию fn к каждому элементу input.
-// Если функция завершается ошибкой, то ошибка добавляется в результирующую ошибку, возвращаемую Map.
+// Если вызов fn завершается ошибкой, то ошибка добавляется в результирующую ошибку, возвращаемую Map.
 func Map[T any](fn func(v T) error, input []T) error {
 	var result error
 	for i, s := range input {
