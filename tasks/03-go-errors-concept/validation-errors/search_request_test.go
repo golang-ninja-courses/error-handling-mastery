@@ -165,6 +165,17 @@ func TestSearchRequest_Validate_multipleErr(t *testing.T) {
 	}
 }
 
+func TestErrorsAreFilled(t *testing.T) {
+	require.NotNil(t, errIsNotRegexp)
+	assert.NotEmpty(t, errIsNotRegexp.Error())
+
+	require.NotNil(t, errInvalidPage)
+	assert.NotEmpty(t, errInvalidPage.Error())
+
+	require.NotNil(t, errInvalidPageSize)
+	assert.NotEmpty(t, errInvalidPageSize.Error())
+}
+
 func containsAnyExclusively(s string, subs []string) bool {
 	var result bool
 	for _, substr := range subs {
