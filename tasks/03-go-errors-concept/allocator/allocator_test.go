@@ -67,7 +67,8 @@ func TestAllocate(t *testing.T) {
 				assert.Nil(t, buffer)
 			} else {
 				require.NoError(t, err)
-				assert.Equal(t, cap(buffer), tt.capacity)
+				assert.Len(t, buffer, 0)
+				assert.Equal(t, tt.capacity, cap(buffer))
 			}
 		})
 	}
