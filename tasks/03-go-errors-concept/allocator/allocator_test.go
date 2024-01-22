@@ -16,49 +16,49 @@ func TestAllocate(t *testing.T) {
 	cases := []struct {
 		name                  string
 		uid                   int
-		size                  int
+		capacity              int
 		isNotPermittedError   bool
 		isArgOutOfDomainError bool
 	}{
 		{
-			name:                  "invalid size from admin",
+			name:                  "invalid capacity from admin",
 			uid:                   Admin,
-			size:                  1023,
+			capacity:              1023,
 			isArgOutOfDomainError: true,
 		},
 		{
-			name: "min valid size from admin",
-			uid:  Admin,
-			size: 1024,
+			name:     "min valid capacity from admin",
+			uid:      Admin,
+			capacity: 1024,
 		},
 		{
-			name: "valid size from admin",
-			uid:  Admin,
-			size: 2048,
+			name:     "valid capacity from admin",
+			uid:      Admin,
+			capacity: 2048,
 		},
 		{
-			name:                "invalid size from unknown user",
+			name:                "invalid capacity from unknown user",
 			uid:                 42,
-			size:                1023,
+			capacity:            1023,
 			isNotPermittedError: true,
 		},
 		{
-			name:                "min valid size from unknown user",
+			name:                "min valid capacity from unknown user",
 			uid:                 42,
-			size:                1024,
+			capacity:            1024,
 			isNotPermittedError: true,
 		},
 		{
-			name:                "valid size from unknown user",
+			name:                "valid capacity from unknown user",
 			uid:                 42,
-			size:                2048,
+			capacity:            2048,
 			isNotPermittedError: true,
 		},
 	}
 
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			buffer, err := Allocate(tt.uid, tt.size)
+			buffer, err := Allocate(tt.uid, tt.capacity)
 			if tt.isNotPermittedError {
 				assert.True(t, isNotPermittedError(err))
 				assert.Nil(t, buffer)
@@ -67,7 +67,7 @@ func TestAllocate(t *testing.T) {
 				assert.Nil(t, buffer)
 			} else {
 				require.NoError(t, err)
-				assert.Len(t, buffer, tt.size)
+				assert.Equal(t, cap(buffer), tt.capacity)
 			}
 		})
 	}
