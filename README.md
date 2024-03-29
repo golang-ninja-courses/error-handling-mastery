@@ -1,17 +1,17 @@
-# Продвинутая работа с ошибками в Go (Golang) <br> https://stepik.org/z/89381
+# Искусство работы с ошибками
 
-Полезные команды:
+### Полезные команды
+
 ```
 $ task fmt
 $ task lint:dir -- "tasks/04-non-standard-modules/combine-errors" 
 ```
 
----
-Авторы:
+### Авторы
 - [Антон Телышев](https://github.com/Antonboom)
 - [Дмитрий Назарков](https://github.com/MysterySuperhero)
 
 ---
 
-Чат курса: https://t.me/goinpractice <br>
-Больше курсов: https://www.golang-courses.ru/
+Чат курса: https://t.me/golangninja <br>
+Больше курсов: [https://golang-ninja.ru](https://golang-ninja.ru/?utm_source=github-error-handling&utm_medium=social&utm_campaign=general)
