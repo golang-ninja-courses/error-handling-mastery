@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	errctx "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/05-errors-best-practices/error-context"
+	errctx "github.com/golang-ninja-courses/error-handling-mastery/tasks/05-errors-best-practices/error-context"
 )
 
 func ExampleAppendTo() {

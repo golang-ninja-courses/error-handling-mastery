@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/examples/05-errors-best-practices/constant-errors-problem/dirtyhacker"
+	"github.com/golang-ninja-courses/error-handling-mastery/examples/05-errors-best-practices/constant-errors-problem/dirtyhacker"
 )
 
 func main() {

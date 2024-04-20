@@ -9,7 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 
-	commandexecutor "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/07-working-with-errors-in-concurrency/command-executor"
+	commandexecutor "github.com/golang-ninja-courses/error-handling-mastery/tasks/07-working-with-errors-in-concurrency/command-executor"
 )
 
 // MockICmdExecutor is a mock of ICmdExecutor interface.

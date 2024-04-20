@@ -1,4 +1,4 @@
-// nolint:deadcode,unused,varcheck
+//nolint:deadcode,unused,varcheck
 package naming
 
 import (

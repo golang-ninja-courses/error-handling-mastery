@@ -14,7 +14,7 @@ issues:
     - SA9003 # Empty branch
 
   exclude-rules:
-    - source: .*github\.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go # Imports
+    - source: .*github\.com/golang-ninja-courses/error-handling-mastery # Imports
       linters:
         - lll
 
@@ -55,7 +55,7 @@ linters-settings:
     sections:
       - standard
       - default
-      - prefix(github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go)
+      - prefix(github.com/golang-ninja-courses/error-handling-mastery)
 
   lll:
     line-length: 130
