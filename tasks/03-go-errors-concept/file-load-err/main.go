@@ -34,7 +34,7 @@ func loadFiles(urls ...string) ([]File, error) {
 }
 
 func transfer() error {
-	_, err := loadFiles("www.golang-courses.ru")
+	_, err := loadFiles("www.golang-ninja.ru")
 	if err != nil {
 		return fmt.Errorf("cannot load files: %v", err)
 	}
