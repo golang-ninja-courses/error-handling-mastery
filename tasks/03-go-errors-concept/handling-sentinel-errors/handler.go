@@ -7,6 +7,31 @@ import (
 
 const defaultPostpone = time.Second
 
+type AlreadyDoneError struct {}
+func (e AlreadyDoneError) Error() string {
+    return "job is already done"
+}
+
+type InconsistentDataError struct {}
+func (e InconsistentDataError) Error() string {
+	return "job payload is corrupted"
+}
+
+type InvalidIDError struct {}
+func (e InvalidIDError) Error() string {
+	return "invalid job id"
+}
+
+type NotFoundError struct {}
+func (e NotFoundError) Error() string {
+	return "job wasn't found"
+}
+
+type NotReadyError struct {}
+func (e NotReadyError) Error() string {
+	return "job is not ready to be performed"
+}
+
 var (
 	ErrAlreadyDone      error = new(AlreadyDoneError)
 	ErrInconsistentData error = new(InconsistentDataError)
@@ -24,9 +49,13 @@ type Handler struct{}
 func (h *Handler) Handle(job Job) (postpone time.Duration, err error) {
 	err = h.process(job)
 	if err != nil {
-		// Обработайте ошибку.
+		if err == ErrAlreadyDone || err == ErrInconsistentData || err == ErrInvalidID || err == ErrNotFound {
+			return 0, nil
+		} else if err == ErrNotReady {
+			return time.Second, nil
+		} 
+		return 0, err
 	}
-
 	return 0, nil
 }
 
