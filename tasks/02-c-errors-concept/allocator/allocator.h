@@ -7,5 +7,17 @@ extern int errno;
 
 void *allocate(int user_id, size_t size)
 {
-    // Реализуй меня.
+    if (user_id != ADMIN) {
+        errno = 1;
+        return NULL;
+    }
+    if (MIN_MEMORY_BLOCK > size ) {
+        errno = 33;
+        return NULL;
+    }
+    void *m = malloc(size);
+    if (m == NULL) {
+        errno = 12;
+    }
+    return m;
 }
