@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	index, err := httpGet("http://www.golang-courses.ru/")
+	index, err := httpGet("http://www.golang-ninja.ru/")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,4 +1,4 @@
-module github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go
+module github.com/golang-ninja-courses/error-handling-mastery
 
 go 1.18
 

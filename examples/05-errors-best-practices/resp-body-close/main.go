@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	res, err := http.Get("http://www.golang-courses.ru/") //nolint:noctx
+	res, err := http.Get("http://www.golang-ninja.ru/") //nolint:noctx
 	if err != nil {
 		panic(err)
 	}

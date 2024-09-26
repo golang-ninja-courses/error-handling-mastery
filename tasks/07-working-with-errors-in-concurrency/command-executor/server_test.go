@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/goleak"
 
-	ce "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/07-working-with-errors-in-concurrency/command-executor"
-	cemocks "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/07-working-with-errors-in-concurrency/command-executor/mocks"
+	ce "github.com/golang-ninja-courses/error-handling-mastery/tasks/07-working-with-errors-in-concurrency/command-executor"
+	cemocks "github.com/golang-ninja-courses/error-handling-mastery/tasks/07-working-with-errors-in-concurrency/command-executor/mocks"
 )
 
 // go test -race -count 10 .

@@ -20,7 +20,7 @@ func main() {
 	defer cancel(nil)
 
 	go func() {
-		ch := make(chan os.Signal)
+		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt)
 		<-ch
 		cancel(errProgramInterrupted)

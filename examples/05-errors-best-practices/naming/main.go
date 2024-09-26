@@ -1,4 +1,4 @@
-// nolint:deadcode,unused,varcheck
+//nolint:deadcode,unused,varcheck
 package naming
 
 import (
@@ -25,6 +25,6 @@ func (e *NotFoundError) Error() string {
 var (
 	// Sentinel errors.
 	// Точно так же название начинается с приставки err или Err.
-	errNotFound2 = &NotFoundError{"https://www.golang-courses.ru/"} // Неэкспортируемая.
-	ErrNotFound2 = &NotFoundError{"https://www.golang-courses.ru/"} // Экспортируемая.
+	errNotFound2 = &NotFoundError{"https://www.golang-ninja.ru/"} // Неэкспортируемая.
+	ErrNotFound2 = &NotFoundError{"https://www.golang-ninja.ru/"} // Экспортируемая.
 )

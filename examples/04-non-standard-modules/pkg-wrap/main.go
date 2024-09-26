@@ -36,7 +36,7 @@ func loadFiles(urls ...string) ([]File, error) {
 }
 
 func transfer() error {
-	_, err := loadFiles("www.golang-courses.ru")
+	_, err := loadFiles("www.golang-ninja.ru")
 	if err != nil {
 		return errors.WithMessage(err, "cannot load files")
 	}
@@ -64,6 +64,6 @@ func main() {
 
 	var fileLoadErr *FileLoadError
 	if err := handle(); errors.As(err, &fileLoadErr) {
-		fmt.Println(fileLoadErr.URL) // www.golang-courses.ru
+		fmt.Println(fileLoadErr.URL) // www.golang-ninja.ru/
 	}
 }

@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	errctx "github.com/www-golang-courses-ru/advanced-dealing-with-errors-in-go/tasks/05-errors-best-practices/error-context"
+	errctx "github.com/golang-ninja-courses/error-handling-mastery/tasks/05-errors-best-practices/error-context"
 )
 
 func TestAppendToNilIsNil(t *testing.T) {

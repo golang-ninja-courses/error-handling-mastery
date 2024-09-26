@@ -8,8 +8,8 @@ import (
 )
 
 func main() {
-	e1 := url.InvalidHostError("www.golang-courses.ru")
-	e2 := url.InvalidHostError("www.golang-courses.ru")
+	e1 := url.InvalidHostError("www.golang-ninja.ru")
+	e2 := url.InvalidHostError("www.golang-ninja.ru")
 	fmt.Println(errors.Is(e1, e2)) // true
 
 	e3 := syscall.Errno(0xd)
