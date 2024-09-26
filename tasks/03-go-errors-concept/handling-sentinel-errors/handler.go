@@ -52,7 +52,7 @@ func (h *Handler) Handle(job Job) (postpone time.Duration, err error) {
 		if err == ErrAlreadyDone || err == ErrInconsistentData || err == ErrInvalidID || err == ErrNotFound {
 			return 0, nil
 		} else if err == ErrNotReady {
-			return time.Second, nil
+			return defaultPostpone, nil
 		} 
 		return 0, err
 	}
