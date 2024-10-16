@@ -4,7 +4,18 @@ package errors
 // Две ошибки с одинаковым текстом, созданные через NewError, не равны между собой:
 //
 //	NewError("end of file") != NewError("end of file")
+
+type Err struct {
+	Message string
+}
+
+func (e *Err) Error() string {
+	return e.Message
+} 
+
 func NewError(msg string) error {
-	// Реализуй меня.
-	return nil
+    e := &Err{
+		Message: msg,
+	}	
+	return e
 }
