@@ -31,6 +31,11 @@ func TestCalculate(t *testing.T) {
 			expectedFactorial: 1,
 		},
 		{
+			name:              "factorial of 5 is 120",
+			n:                 5,
+			expectedFactorial: 120,
+		},
+		{
 			name:              "factorial of 10 is 3628800",
 			n:                 10,
 			expectedFactorial: 3628800,
