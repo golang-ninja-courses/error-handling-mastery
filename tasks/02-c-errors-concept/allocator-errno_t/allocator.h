@@ -4,8 +4,6 @@
 // Если define выше не работает для нашего компилятора, то определяем тип руками:
 // typedef int errno_t;
 
-extern int errno;
-
 #define ADMIN 777
 #define MIN_MEMORY_BLOCK 1024
 
