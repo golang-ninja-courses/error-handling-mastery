@@ -3,9 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define __STDC_WANT_LIB_EXT1__ 1
-// Если define выше не работает для нашего компилятора, то определяем тип руками:
-// typedef int errno_t;
+typedef int errno_t;
 
 const errno_t ESOMETHINGREALLYBAD = 4242;
 
