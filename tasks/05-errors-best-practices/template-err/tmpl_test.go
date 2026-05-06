@@ -49,6 +49,7 @@ func TestParseAndExecuteTemplate_InvalidTemplate(t *testing.T) {
 	err := ParseAndExecuteTemplate(b, "greeting", tmpl, struct{ Name string }{Name: "Anthony"})
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errParseTemplate)
+	assert.Empty(t, b.String())
 }
 
 func TestParseAndExecuteTemplate_ExecutingError(t *testing.T) {
@@ -69,4 +70,5 @@ func TestParseAndExecuteTemplate_ExecutingError(t *testing.T) {
 	})
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errExecuteTemplate)
+	assert.Empty(t, b.String())
 }
