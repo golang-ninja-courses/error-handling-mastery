@@ -2,8 +2,8 @@ package tmpl
 
 import (
 	"bytes"
+	"errors"
 	"testing"
-	"unsafe"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -55,14 +55,18 @@ func TestParseAndExecuteTemplate_ExecutingError(t *testing.T) {
 	tmpl := `
 <html>
 	<body>
-		{{ with .Name -}}
-		<h1>Hello {{ . }}!</h1>
-		{{- end }}
+		<h1>Hello {{ call .Name }}!</h1>
 	</body>
 </html>`
 	b := bytes.NewBuffer(nil)
 
-	err := ParseAndExecuteTemplate(b, "greeting", tmpl, struct{ Name unsafe.Pointer }{})
+	err := ParseAndExecuteTemplate(b, "greeting", tmpl, struct {
+		Name func() (string, error)
+	}{
+		Name: func() (string, error) {
+			return "", errors.New("boom")
+		},
+	})
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errExecuteTemplate)
 }
