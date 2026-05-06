@@ -53,6 +53,23 @@ storage: cannot get image:
 `+firstErr.Error(), pErr.Error())
 }
 
+func TestPretty_FullChainPreserved(t *testing.T) {
+	root := sql.ErrNoRows
+	layer2 := fmt.Errorf("layer2: secret: %w", root)
+	layer1 := fmt.Errorf("layer1: %w", layer2)
+
+	pErr := Pretty(layer1)
+	require.Error(t, pErr)
+
+	assert.ErrorIs(t, pErr, layer1, "pErr should find layer1")
+	assert.ErrorIs(t, pErr, layer2, "pErr should find layer2")
+	assert.ErrorIs(t, pErr, root, "myErr should find root")
+
+	assert.Equal(t, `layer1:
+layer2: secret:
+`+root.Error(), pErr.Error())
+}
+
 func TestPretty_NoError(t *testing.T) {
 	err := Pretty(nil)
 	require.NoError(t, err)
