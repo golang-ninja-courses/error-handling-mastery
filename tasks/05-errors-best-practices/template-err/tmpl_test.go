@@ -70,5 +70,8 @@ func TestParseAndExecuteTemplate_ExecutingError(t *testing.T) {
 	})
 	require.Error(t, err)
 	assert.ErrorIs(t, err, errExecuteTemplate)
-	assert.Empty(t, b.String())
+	assert.Equal(t, `
+<html>
+	<body>
+		<h1>Hello `, b.String())
 }
